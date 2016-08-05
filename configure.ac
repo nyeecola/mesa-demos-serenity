@@ -181,7 +181,7 @@ esac
 
 dnl Set up C warning flags.  Copy of XORG_CWARNFLAGS.
 if  test "x$GCC" = xyes ; then
-    CWARNFLAGS="-Wall -Wpointer-arith -Wstrict-prototypes -Wmissing-prototypes \
+    CWARNFLAGS="-Wall -Wpointer-arith -Wmissing-prototypes \
 -Wmissing-declarations -Wnested-externs -fno-strict-aliasing \
 -Wbad-function-cast"
     case `$CC -dumpversion` in
@@ -331,6 +331,7 @@ AC_OUTPUT([
 	src/egl/oes_vg/Makefile
 	src/fp/Makefile
 	src/fpglsl/Makefile
+	src/glad/Makefile
 	src/glsl/Makefile
 	src/gs/Makefile
 	src/data/Makefile

@@ -22,27 +22,16 @@
 # Authors:
 #    Eric Anholt <eric@anholt.net>
 
-SUBDIRS = \
-	glad \
-	util \
-	data \
-	demos \
-	egl \
-	fp \
-	fpglsl \
-	glsl \
-        gs \
-	objviewer \
-	osdemos \
-	perf \
-	rbug \
-	redbook \
-	samples \
-	slang \
-	tests \
-	tools \
-	trivial \
-	vp \
-	vpglsl \
-	wgl \
-	xdemos
+AM_CFLAGS = \
+	$(DEMO_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include
+AM_LDFLAGS = \
+	$(DEMO_LIBS)
+
+noinst_LTLIBRARIES = libglad.la
+
+libglad_la_SOURCES = \
+	src/glad.c
+
+EXTRA_DIST = \
+	README

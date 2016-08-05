@@ -78,7 +78,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 		#-Wold-style-definition
 		#-Wdeclaration-after-statement
         )
-	set (CMAKE_C_FLAGS "-Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Wbad-function-cast ${CMAKE_CXX_FLAGS}")
+	set (CMAKE_C_FLAGS "-Wmissing-prototypes -Wnested-externs -Wbad-function-cast ${CMAKE_CXX_FLAGS}")
 endif ()
 
 if (WIN32)

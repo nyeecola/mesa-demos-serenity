@@ -25,6 +25,7 @@
 AM_CFLAGS = \
 	$(DEMO_CFLAGS) \
 	$(GLUT_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 
 AM_LDFLAGS = \
@@ -52,6 +53,8 @@ vstest_SOURCES = \
 	vstest.c \
 	framework.c \
 	framework.h
+
+LDADD = ../glad/libglad.la
 
 tests: cltest sotest vstest
 	! ./sotest 2> /dev/null | (grep -e ^[*][*][*])

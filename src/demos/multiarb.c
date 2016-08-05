@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 #include "readtex.h"
@@ -342,7 +342,7 @@ int main( int argc, char *argv[] )
    glutInit( &argc, argv );
    glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
    glutCreateWindow(argv[0] );
-   glewInit();
+   gladLoadGL();
 
    Init( argc, argv );
 

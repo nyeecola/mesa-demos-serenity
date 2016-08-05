@@ -15,7 +15,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 
@@ -127,7 +127,7 @@ int main( int argc, char *argv[] )
    glutInitWindowPosition( 0, 0 );
    glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
    glutCreateWindow(argv[0] );
-   glewInit();
+   gladLoadGL();
 
    Init( argc, argv );
 

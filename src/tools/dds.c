@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 
@@ -370,7 +370,7 @@ main (int argc, char *argv[])
   glutCreateWindow ("DDS Texture Demo");
 
   /* Initialize OpenGL extensions */
-  glewInit();
+  gladLoadGL();
 
   atexit (cleanup);
   init (argv[1]);

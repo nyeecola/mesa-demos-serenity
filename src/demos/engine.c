@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 #include "readtex.h"
 #include "trackball.h"
@@ -1328,7 +1328,7 @@ main(int argc, char *argv[])
    glutInit(&argc, argv);
    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
    Win = glutCreateWindow("OpenGL Engine Demo");
-   glewInit();
+   gladLoadGL();
    glutReshapeFunc(Reshape);
    glutMouseFunc(Mouse);
    glutMotionFunc(Motion);

@@ -6,7 +6,7 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 extern void InitFramework (int *argc, char *argv[]);

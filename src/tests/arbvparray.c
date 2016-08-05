@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "GL/glew.h"
+#include "glad/glad.h"
 #include "glut_wrap.h"
 
 #define MAXVERTS 10000
@@ -180,7 +180,7 @@ static void init_program(void)
    static const GLfloat scale[4] = {2.0, 2.0, 2.0, 0.0};
    static const GLfloat bias[4] = {1.0, 1.0, 1.0, 0.0};
 
-   if (!GLEW_ARB_vertex_program) {
+   if (!GLAD_GL_ARB_vertex_program) {
       printf("Sorry, this program requires GL_ARB_vertex_program\n");
       exit(1);
    }
@@ -289,7 +289,7 @@ int main(int argc, char **argv)
    if (glutCreateWindow("Isosurface") <= 0) {
       exit(0);
    }
-   glewInit();
+   gladLoadGL();
    glutReshapeFunc(Reshape);
    glutKeyboardFunc(Key);
    glutSpecialFunc(SpecialKey);

@@ -23,7 +23,8 @@
 #    Eric Anholt <eric@anholt.net>
 
 AM_CFLAGS = \
-	$(DEMO_CFLAGS)
+	$(DEMO_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include
 AM_LDFLAGS = \
 	$(DEMO_LIBS)
 

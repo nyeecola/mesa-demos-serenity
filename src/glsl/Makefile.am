@@ -25,10 +25,12 @@
 AM_CFLAGS = \
 	$(DEMO_CFLAGS) \
 	$(GLUT_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 AM_CXXFLAGS = \
 	$(DEMO_CXXFLAGS) \
 	$(GLUT_CXXFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 AM_LDFLAGS = \
 	$(DEMO_LIBS) \
@@ -82,41 +84,42 @@ gsraytrace_SOURCES = gsraytrace.cpp
 samplers_array_SOURCES = samplers.c
 samplers_array_CFLAGS = $(AM_CFLAGS) -DSAMPLERS_ARRAY
 
-array_LDADD = ../util/libutil.la
-bitmap_LDADD = ../util/libutil.la
-bezier_LDADD = ../util/libutil.la
-brick_LDADD = ../util/libutil.la
-bump_LDADD = ../util/libutil.la
-blinking_teapot_LDADD = ../util/libutil.la
-convolutions_LDADD = ../util/libutil.la
-deriv_LDADD = ../util/libutil.la
-geom_outlining_130_LDADD = ../util/libutil.la
-geom_outlining_150_LDADD = ../util/libutil.la
-geom_sprites_LDADD = ../util/libutil.la
-geom_stipple_lines_LDADD = ../util/libutil.la
-geom_wide_lines_LDADD = ../util/libutil.la
-gsraytrace_LDADD = ../util/libutil.la
-fsraytrace_LDADD = ../util/libutil.la
-fragcoord_LDADD = ../util/libutil.la
-identity_LDADD = ../util/libutil.la
-linktest_LDADD = ../util/libutil.la
-mandelbrot_LDADD = ../util/libutil.la
-multitex_LDADD = ../util/libutil.la
-noise_LDADD = ../util/libutil.la
-simplex_noise_LDADD = ../util/libutil.la
-pointcoord_LDADD = ../util/libutil.la
-points_LDADD = ../util/libutil.la
-samplers_LDADD = ../util/libutil.la
-samplers_array_LDADD = ../util/libutil.la
-shtest_LDADD = ../util/libutil.la
-skinning_LDADD = ../util/libutil.la
-texdemo1_LDADD = ../util/libutil.la
-toyball_LDADD = ../util/libutil.la
-trirast_LDADD = ../util/libutil.la
-twoside_LDADD = ../util/libutil.la
-vert_or_frag_only_LDADD = ../util/libutil.la
-vert_tex_LDADD = ../util/libutil.la
-vsraytrace_LDADD = ../util/libutil.la
+LDADD = ../glad/libglad.la
+array_LDADD = ../util/libutil.la ../glad/libglad.la
+bitmap_LDADD = ../util/libutil.la ../glad/libglad.la
+bezier_LDADD = ../util/libutil.la ../glad/libglad.la
+brick_LDADD = ../util/libutil.la ../glad/libglad.la
+bump_LDADD = ../util/libutil.la ../glad/libglad.la
+blinking_teapot_LDADD = ../util/libutil.la ../glad/libglad.la
+convolutions_LDADD = ../util/libutil.la ../glad/libglad.la
+deriv_LDADD = ../util/libutil.la ../glad/libglad.la
+geom_outlining_130_LDADD = ../util/libutil.la ../glad/libglad.la
+geom_outlining_150_LDADD = ../util/libutil.la ../glad/libglad.la
+geom_sprites_LDADD = ../util/libutil.la ../glad/libglad.la
+geom_stipple_lines_LDADD = ../util/libutil.la ../glad/libglad.la
+geom_wide_lines_LDADD = ../util/libutil.la ../glad/libglad.la
+gsraytrace_LDADD = ../util/libutil.la ../glad/libglad.la
+fsraytrace_LDADD = ../util/libutil.la ../glad/libglad.la
+fragcoord_LDADD = ../util/libutil.la ../glad/libglad.la
+identity_LDADD = ../util/libutil.la ../glad/libglad.la
+linktest_LDADD = ../util/libutil.la ../glad/libglad.la
+mandelbrot_LDADD = ../util/libutil.la ../glad/libglad.la
+multitex_LDADD = ../util/libutil.la ../glad/libglad.la
+noise_LDADD = ../util/libutil.la ../glad/libglad.la
+simplex_noise_LDADD = ../util/libutil.la ../glad/libglad.la
+pointcoord_LDADD = ../util/libutil.la ../glad/libglad.la
+points_LDADD = ../util/libutil.la ../glad/libglad.la
+samplers_LDADD = ../util/libutil.la ../glad/libglad.la
+samplers_array_LDADD = ../util/libutil.la ../glad/libglad.la
+shtest_LDADD = ../util/libutil.la ../glad/libglad.la
+skinning_LDADD = ../util/libutil.la ../glad/libglad.la
+texdemo1_LDADD = ../util/libutil.la ../glad/libglad.la
+toyball_LDADD = ../util/libutil.la ../glad/libglad.la
+trirast_LDADD = ../util/libutil.la ../glad/libglad.la
+twoside_LDADD = ../util/libutil.la ../glad/libglad.la
+vert_or_frag_only_LDADD = ../util/libutil.la ../glad/libglad.la
+vert_tex_LDADD = ../util/libutil.la ../glad/libglad.la
+vsraytrace_LDADD = ../util/libutil.la ../glad/libglad.la
 
 EXTRA_DIST = \
 	CH06-brick.frag \

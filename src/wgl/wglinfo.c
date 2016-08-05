@@ -34,23 +34,13 @@
 
 #include <windows.h>
 #include <stdbool.h>
-#include <GL/glew.h>
-#include <GL/wglew.h>
+#include <glad/glad.h>
+#include <glad/glad_wgl.h>
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "glinfo_common.h"
-
-
-static GLboolean have_WGL_ARB_create_context;
-static GLboolean have_WGL_ARB_pbuffer;
-static GLboolean have_WGL_ARB_pixel_format;
-static GLboolean have_WGL_ARB_multisample;
-static GLboolean have_WGL_ARB_framebuffer_sRGB; /* or EXT version */
-
-static PFNWGLGETPIXELFORMATATTRIBIVARBPROC wglGetPixelFormatAttribivARB_func;
-static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB_func;
 
 
 /**
@@ -160,49 +150,20 @@ print_screen_info(HDC _hdc, const struct options *opts, GLboolean coreProfile)
    }
 
    if (wglMakeCurrent(hdc, ctx)) {
-#if defined(WGL_ARB_extensions_string)
-      PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB_func = 
-         (PFNWGLGETEXTENSIONSSTRINGARBPROC)wglGetProcAddress("wglGetExtensionsStringARB");
-#endif
+      gladLoadGL();
+      gladLoadWGL(hdc);
       const char *glVendor, *glRenderer, *glVersion, *glExtensions;
       const char *wglExtensions = NULL;
       struct ext_functions extfuncs;
       
-#if defined(WGL_ARB_extensions_string)
-      if (wglGetExtensionsStringARB_func) {
-         wglExtensions = wglGetExtensionsStringARB_func(hdc);
-         if (extension_supported("WGL_ARB_pbuffer", wglExtensions)) {
-            have_WGL_ARB_pbuffer = GL_TRUE;
-         }
-         if (extension_supported("WGL_ARB_pixel_format", wglExtensions)) {
-            have_WGL_ARB_pixel_format = GL_TRUE;
-         }
-         if (extension_supported("WGL_ARB_multisample", wglExtensions)) {
-            have_WGL_ARB_multisample = GL_TRUE;
-         }
-         if (extension_supported("WGL_ARB_create_context", wglExtensions)) {
-            have_WGL_ARB_create_context = GL_TRUE;
-         }
-         if (extension_supported("WGL_ARB_framebuffer_sRGB", wglExtensions) ||
-             extension_supported("WGL_EXT_framebuffer_sRGB", wglExtensions)) {
-            have_WGL_ARB_framebuffer_sRGB = GL_TRUE;
-         }
+      if (GLAD_WGL_ARB_extensions_string) {
+         wglExtensions = wglGetExtensionsStringARB(hdc);
       }
-#endif
 
-      if (coreProfile && have_WGL_ARB_create_context) {
+      if (coreProfile && GLAD_WGL_ARB_create_context) {
          /* Try to create a new, core context */
          HGLRC core_ctx = 0;
          int i;
-
-         wglCreateContextAttribsARB_func =
-            (PFNWGLCREATECONTEXTATTRIBSARBPROC)
-            wglGetProcAddress("wglCreateContextAttribsARB");
-         assert(wglCreateContextAttribsARB_func);
-         if (!wglCreateContextAttribsARB_func) {
-            printf("Failed to get wglCreateContextAttribsARB pointer.");
-            return;
-         }
 
          for (i = 0; gl_versions[i].major > 0; i++) {
             int attribs[10], n;
@@ -223,7 +184,7 @@ print_screen_info(HDC _hdc, const struct options *opts, GLboolean coreProfile)
             }
             attribs[n++] = 0;
 
-            core_ctx = wglCreateContextAttribsARB_func(hdc, 0, attribs);
+            core_ctx = wglCreateContextAttribsARB(hdc, 0, attribs);
             if (core_ctx) {
                break;
             }
@@ -245,12 +206,9 @@ print_screen_info(HDC _hdc, const struct options *opts, GLboolean coreProfile)
          coreProfile = GL_FALSE;
       }
 
-      extfuncs.GetProgramivARB = (PFNGLGETPROGRAMIVARBPROC)
-         wglGetProcAddress("glGetProgramivARB");
-      extfuncs.GetStringi = (PFNGLGETSTRINGIPROC)
-         wglGetProcAddress("glGetStringi");
-      extfuncs.GetConvolutionParameteriv = (GETCONVOLUTIONPARAMETERIVPROC)
-         wglGetProcAddress("glGetConvolutionParameteriv");
+      extfuncs.GetProgramivARB = glGetProgramivARB;
+      extfuncs.GetStringi = glGetStringi;
+      extfuncs.GetConvolutionParameteriv = glGetConvolutionParameteriv;
 
       glVendor = (const char *) glGetString(GL_VENDOR);
       glRenderer = (const char *) glGetString(GL_RENDERER);
@@ -279,26 +237,20 @@ print_screen_info(HDC _hdc, const struct options *opts, GLboolean coreProfile)
 
       version = (glVersion[0] - '0') * 10 + (glVersion[2] - '0');
 
-#ifdef GL_VERSION_2_0
-      if (version >= 20) {
+      if (GLAD_GL_VERSION_2_0) {
          char *v = (char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
          printf("%s shading language version string: %s\n", oglString, v);
       }
-#endif
-#ifdef GL_VERSION_3_0
-      if (version >= 30) {
+      if (GLAD_GL_VERSION_3_0) {
          GLint flags;
          glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
          printf("%s context flags: %s\n", oglString, context_flags_string(flags));
       }
-#endif
-#ifdef GL_VERSION_3_2
-      if (version >= 32) {
+      if (GLAD_GL_VERSION_3_2) {
          GLint mask;
          glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &mask);
          printf("%s profile mask: %s\n", oglString, profile_mask_string(mask));
       }
-#endif
 
       if (opts->mode != Brief) {
          printf("%s extensions:\n", oglString);
@@ -453,8 +405,8 @@ static int
 get_pf_attrib(HDC hdc, int pf, int attrib)
 {
    int layer = 0, value;
-   assert(have_WGL_ARB_pixel_format);
-   if (wglGetPixelFormatAttribivARB_func(hdc, pf, layer, 1, &attrib, &value)) {
+   assert(GLAD_WGL_ARB_pixel_format);
+   if (wglGetPixelFormatAttribivARB(hdc, pf, layer, 1, &attrib, &value)) {
       return value;
    }
    else {
@@ -471,7 +423,7 @@ get_format_info(HDC hdc, int pf, struct format_info *info)
 {
    memset(info, 0, sizeof(*info));
 
-   if (have_WGL_ARB_pixel_format) {
+   if (GLAD_WGL_ARB_pixel_format) {
       int swapMethod;
 
       info->pfd.dwFlags = 0;
@@ -488,7 +440,7 @@ get_format_info(HDC hdc, int pf, struct format_info *info)
 
       if (get_pf_attrib(hdc, pf, WGL_DRAW_TO_BITMAP_ARB))
          info->draw_to_bitmap = true;
-      if (have_WGL_ARB_pbuffer && get_pf_attrib(hdc, pf, WGL_DRAW_TO_PBUFFER_ARB))
+      if (GLAD_WGL_ARB_pbuffer && get_pf_attrib(hdc, pf, WGL_DRAW_TO_PBUFFER_ARB))
          info->draw_to_pbuffer = true;
       if (get_pf_attrib(hdc, pf, WGL_SUPPORT_GDI_ARB))
          info->gdi_drawing = true;
@@ -533,7 +485,8 @@ get_format_info(HDC hdc, int pf, struct format_info *info)
 
       info->transparency = get_pf_attrib(hdc, pf, WGL_TRANSPARENT_ARB);
 
-      if (have_WGL_ARB_framebuffer_sRGB) {
+      if (GLAD_WGL_ARB_framebuffer_sRGB ||
+          GLAD_WGL_EXT_framebuffer_sRGB) {
          info->srgb = get_pf_attrib(hdc, pf, WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB);
       }
    }
@@ -554,16 +507,12 @@ print_visual_info(HDC hdc, InfoMode mode)
    int numVisuals, numWglVisuals;
    int i;
 
-   wglGetPixelFormatAttribivARB_func =
-      (PFNWGLGETPIXELFORMATATTRIBIVARBPROC)
-      wglGetProcAddress("wglGetPixelFormatAttribivARB");
-
    /* Get number of visuals / pixel formats */
    numVisuals = DescribePixelFormat(hdc, 1,
                                     sizeof(PIXELFORMATDESCRIPTOR), NULL);
    printf("%d Regular pixel formats\n", numVisuals);
 
-   if (have_WGL_ARB_pixel_format) {
+   if (GLAD_WGL_ARB_pixel_format) {
       int numExtVisuals = get_pf_attrib(hdc, 0, WGL_NUMBER_PIXEL_FORMATS_ARB);
       printf("%d Regular + Extended pixel formats\n", numExtVisuals);
       numVisuals = numExtVisuals;

@@ -24,6 +24,7 @@
 
 AM_CFLAGS = \
 	$(OSMESA_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 
 if HAVE_OSMESA
@@ -35,6 +36,6 @@ endif
 
 osdemo16_SOURCES = osdemo16.c
 osdemo32_SOURCES = osdemo32.c
-osdemo_LDADD = $(OSMESA_LIBS) ../util/libutil.la
-osdemo16_LDADD = $(OSMESA_LIBS) $(OSMESA16_LIBS) ../util/libutil.la
-osdemo32_LDADD = $(OSMESA32_LIBS) ../util/libutil.la
+osdemo_LDADD = $(OSMESA_LIBS) ../util/libutil.la ../glad/libglad.la
+osdemo16_LDADD = $(OSMESA_LIBS) $(OSMESA16_LIBS) ../util/libutil.la ../glad/libglad.la
+osdemo32_LDADD = $(OSMESA32_LIBS) ../util/libutil.la ../glad/libglad.la

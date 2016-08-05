@@ -2,7 +2,7 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/src/util
 	${OPENGL_INCLUDE_PATH}
 	${GLUT_INCLUDE_DIR}
-	${GLEW_INCLUDE_DIR}
+	${GLAD_INCLUDE_DIR}
 )
 
 link_directories (
@@ -14,7 +14,7 @@ link_libraries (
 	${OPENGL_gl_LIBRARY}
 	${OPENGL_glu_LIBRARY}
 	${GLUT_glut_LIBRARY}
-	${GLEW_glew_LIBRARY}
+	glad
 )
 
 set (subdir vpglsl)

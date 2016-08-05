@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 
@@ -152,7 +152,7 @@ main(int argc, char *argv[])
    glutKeyboardFunc(Key);
    glutDisplayFunc(Redisplay);
    glutIdleFunc(Idle);
-   glewInit();
+   gladLoadGL();
    Init();
    glutMainLoop();
    return 0;

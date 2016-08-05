@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #define GL_GLEXT_PROTOTYPES
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 #include "shaderutil.h"
 
@@ -275,7 +275,7 @@ int main( int argc, char *argv[] )
    glutInitWindowSize( 250, 250 );
    glutInitDisplayMode( GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH );
    glutCreateWindow(argv[0]);
-   glewInit();
+   gladLoadGL();
    glutReshapeFunc( Reshape );
    glutKeyboardFunc( Key );
    glutDisplayFunc( Display );

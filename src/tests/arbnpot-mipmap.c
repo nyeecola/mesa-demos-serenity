@@ -46,7 +46,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 GLubyte mipmapImage32[40][46][3];
@@ -176,7 +176,7 @@ int main(int argc, char** argv)
     glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize (500, 500);
     glutCreateWindow (argv[0]);
-    glewInit();
+    gladLoadGL();
     myinit();
     glutReshapeFunc (myReshape);
     glutDisplayFunc(display);

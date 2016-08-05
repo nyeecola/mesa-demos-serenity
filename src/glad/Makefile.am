@@ -33,5 +33,7 @@ noinst_LTLIBRARIES = libglad.la
 libglad_la_SOURCES = \
 	src/glad.c
 
+libglad_la_LIBADD = -ldl
+
 EXTRA_DIST = \
 	README

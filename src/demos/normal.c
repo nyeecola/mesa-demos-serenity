@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 
@@ -459,7 +459,7 @@ Init(void)
       "  gl_Position = ftransform();\n"
       "}\n";
 
-   if (!GLEW_VERSION_2_0) {
+   if (!GLAD_GL_VERSION_2_0) {
       printf("This program requires OpenGL 2.x or higher\n");
       exit(1);
    }
@@ -580,7 +580,7 @@ main(int argc, char *argv[])
    glutInit(&argc, argv);
    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
    win = glutCreateWindow(argv[0]);
-   glewInit();
+   gladLoadGL();
    glutReshapeFunc(Reshape);
    glutKeyboardFunc(Key);
    glutSpecialFunc(SpecialKey);

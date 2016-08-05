@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 
@@ -676,7 +676,7 @@ main(int argc, char **argv)
       exit(0);
    }
 
-   glewInit();
+   gladLoadGL();
 
    init();
 

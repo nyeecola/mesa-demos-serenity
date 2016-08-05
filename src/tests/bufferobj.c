@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 #define NUM_OBJECTS 10
@@ -504,7 +504,7 @@ int main( int argc, char *argv[] )
    glutInitWindowSize( 600, 300 );
    glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
    Win = glutCreateWindow(argv[0]);
-   glewInit();
+   gladLoadGL();
    glutReshapeFunc( Reshape );
    glutKeyboardFunc( Key );
    glutSpecialFunc( SpecialKey );

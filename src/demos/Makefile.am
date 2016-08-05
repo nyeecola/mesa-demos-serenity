@@ -25,6 +25,7 @@
 AM_CFLAGS = \
 	$(DEMO_CFLAGS) \
 	$(GLUT_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 AM_LDFLAGS = \
 	$(DEMO_LIBS) \
@@ -93,28 +94,29 @@ tunnel_SOURCES = \
 	tunnel.c \
 	tunneldat.h
 
-copypix_LDADD = ../util/libutil.la
-cubemap_LDADD = ../util/libutil.la
-cuberender_LDADD = ../util/libutil.la
-drawpix_LDADD = ../util/libutil.la
-dissolve_LDADD = ../util/libutil.la
-engine_LDADD = ../util/libutil.la
-fbo_firecube_LDADD = ../util/libutil.la
-fire_LDADD = ../util/libutil.la
-gloss_LDADD = ../util/libutil.la
-ipers_LDADD = ../util/libutil.la
-isosurf_LDADD = ../util/libutil.la
-lodbias_LDADD = ../util/libutil.la
-multiarb_LDADD = ../util/libutil.la
-projtex_LDADD = ../util/libutil.la
-readpix_LDADD = ../util/libutil.la
-reflect_LDADD = ../util/libutil.la
-teapot_LDADD = ../util/libutil.la
-texcyl_LDADD = ../util/libutil.la
-textures_LDADD = ../util/libutil.la
-tunnel_LDADD = ../util/libutil.la
-tunnel2_LDADD = ../util/libutil.la
-winpos_LDADD = ../util/libutil.la
+LDADD = ../glad/libglad.la
+copypix_LDADD = ../util/libutil.la ../glad/libglad.la
+cubemap_LDADD = ../util/libutil.la ../glad/libglad.la
+cuberender_LDADD = ../util/libutil.la ../glad/libglad.la
+drawpix_LDADD = ../util/libutil.la ../glad/libglad.la
+dissolve_LDADD = ../util/libutil.la ../glad/libglad.la
+engine_LDADD = ../util/libutil.la ../glad/libglad.la
+fbo_firecube_LDADD = ../util/libutil.la ../glad/libglad.la
+fire_LDADD = ../util/libutil.la ../glad/libglad.la
+gloss_LDADD = ../util/libutil.la ../glad/libglad.la
+ipers_LDADD = ../util/libutil.la ../glad/libglad.la
+isosurf_LDADD = ../util/libutil.la ../glad/libglad.la
+lodbias_LDADD = ../util/libutil.la ../glad/libglad.la
+multiarb_LDADD = ../util/libutil.la ../glad/libglad.la
+projtex_LDADD = ../util/libutil.la ../glad/libglad.la
+readpix_LDADD = ../util/libutil.la ../glad/libglad.la
+reflect_LDADD = ../util/libutil.la ../glad/libglad.la
+teapot_LDADD = ../util/libutil.la ../glad/libglad.la
+texcyl_LDADD = ../util/libutil.la ../glad/libglad.la
+textures_LDADD = ../util/libutil.la ../glad/libglad.la
+tunnel_LDADD = ../util/libutil.la ../glad/libglad.la
+tunnel2_LDADD = ../util/libutil.la ../glad/libglad.la
+winpos_LDADD = ../util/libutil.la ../glad/libglad.la
 
 EXTRA_DIST = \
 	README

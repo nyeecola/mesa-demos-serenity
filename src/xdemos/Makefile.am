@@ -25,6 +25,7 @@
 AM_CFLAGS = \
 	$(DEMO_CFLAGS) \
 	$(X11_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 AM_LDFLAGS = \
 	$(DEMO_LIBS) \
@@ -76,6 +77,7 @@ glxinfo_SOURCES = \
 	glinfo_common.c \
 	glinfo_common.h
 
+LDADD = ../glad/libglad.la
 glthreads_LDADD = -lpthread
 glxgears_fbconfig_LDADD = libpbutil.la
 pbdemo_LDADD = libpbutil.la

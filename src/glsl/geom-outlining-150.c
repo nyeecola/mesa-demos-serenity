@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 #include "shaderutil.h"
 #include "trackball.h"
@@ -309,7 +309,7 @@ Init(void)
    if (!ShadersSupported())
       exit(1);
 
-   if (!GLEW_VERSION_3_2) {
+   if (!GLAD_GL_VERSION_3_2) {
       fprintf(stderr, "Sorry, OpenGL 3.2 or later required.\n");
       exit(1);
    }
@@ -373,11 +373,7 @@ main(int argc, char *argv[])
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 #endif
    Win = glutCreateWindow(argv[0]);
-   /* glewInit requires glewExperimentel set to true for core profiles.
-    * Depending on the glew version it also generates a GL_INVALID_ENUM.
-    */
-   glewExperimental = GL_TRUE;
-   glewInit();
+   gladLoadGL();
    glGetError();
    glutReshapeFunc(Reshape);
    glutKeyboardFunc(Key);

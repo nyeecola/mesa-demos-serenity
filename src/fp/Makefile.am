@@ -28,6 +28,7 @@
 AM_CFLAGS = \
 	$(DEMO_CFLAGS) \
 	$(GLUT_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 AM_LDFLAGS = \
 	$(DEMO_LIBS) \
@@ -44,6 +45,8 @@ noinst_PROGRAMS = \
 	tri-param \
 	fp-tri
 endif
+
+LDADD = ../glad/libglad.la
 
 EXTRA_DIST = \
 	abs.txt \

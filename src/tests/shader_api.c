@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 static void assert_test(const char *file, int line, int cond, const char *msg)
@@ -324,9 +324,9 @@ int main(int argc, char **argv)
 {
    glutInit(&argc, argv);
    glutCreateWindow("Mesa bug demo");
-   glewInit();
+   gladLoadGL();
 
-   if (!GLEW_VERSION_2_0) {
+   if (!GLAD_GL_VERSION_2_0) {
       printf("Sorry, this test requires OpenGL 2.x GLSL support\n");
       exit(0);
    }

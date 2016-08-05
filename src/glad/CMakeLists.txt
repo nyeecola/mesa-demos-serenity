@@ -8,3 +8,7 @@ endif ()
 add_library (glad STATIC
 	${GLAD_SOURCES}
 )
+
+target_link_libraries (glad
+	${CMAKE_DL_LIBS}
+)

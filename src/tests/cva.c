@@ -15,7 +15,7 @@
 #include <windows.h>
 #endif
 #define GL_GLEXT_LEGACY
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 GLfloat verts[][4] = {
@@ -61,7 +61,7 @@ static void init( void )
    glVertexPointer( 3, GL_FLOAT, sizeof(verts[0]), verts );
    glColorPointer( 4, GL_UNSIGNED_BYTE, 0, color );
 
-   if ( GLEW_EXT_compiled_vertex_array ) {
+   if ( GLAD_GL_EXT_compiled_vertex_array ) {
       glLockArraysEXT( 0, 4 );
    }
 }
@@ -125,18 +125,18 @@ int main( int argc, char **argv )
    glutInitWindowSize( 250, 250 );
    glutInitWindowPosition( 100, 100 );
    glutCreateWindow( "CVA Test" );
-   glewInit();
+   gladLoadGL();
 
    /* Make sure the server supports GL 1.2 vertex arrays.
     */
-   if ( !GLEW_VERSION_1_2 ) {
+   if ( !GLAD_GL_VERSION_1_2 ) {
       fprintf( stderr, "This program requires OpenGL 1.2 vertex arrays.\n" );
       exit( -1 );
    }
 
    /* See if the server supports compiled vertex arrays.
     */
-   if ( !GLEW_EXT_compiled_vertex_array ) {
+   if ( !GLAD_GL_EXT_compiled_vertex_array ) {
       fprintf( stderr, "Compiled vertex arrays not supported by this renderer.\n" );
    }
 

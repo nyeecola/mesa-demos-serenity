@@ -25,7 +25,7 @@
 
 
 #define GL_GLEXT_PROTOTYPES
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <stdlib.h>
 #include <math.h>
 

@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdarg.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 #include "glm.h"
 #include "skybox.h"
@@ -437,21 +437,21 @@ Motion(int x, int y)
 static void
 DoFeatureChecks(void)
 {
-   if (!GLEW_VERSION_2_0) {
+   if (!GLAD_GL_VERSION_2_0) {
       /* check for individual extensions */
-      if (!GLEW_ARB_texture_cube_map) {
+      if (!GLAD_GL_ARB_texture_cube_map) {
          printf("Sorry, GL_ARB_texture_cube_map is required.\n");
          exit(1);
       }
-      if (!GLEW_ARB_vertex_shader) {
+      if (!GLAD_GL_ARB_vertex_shader) {
          printf("Sorry, GL_ARB_vertex_shader is required.\n");
          exit(1);
       }
-      if (!GLEW_ARB_fragment_shader) {
+      if (!GLAD_GL_ARB_fragment_shader) {
          printf("Sorry, GL_ARB_fragment_shader is required.\n");
          exit(1);
       }
-      if (!GLEW_ARB_vertex_buffer_object) {
+      if (!GLAD_GL_ARB_vertex_buffer_object) {
          printf("Sorry, GL_ARB_vertex_buffer_object is required.\n");
          exit(1);
       }
@@ -481,7 +481,7 @@ main(int argc, char** argv)
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
    glutCreateWindow("objview");
 
-   glewInit();
+   gladLoadGL();
 
    DoFeatureChecks();
 

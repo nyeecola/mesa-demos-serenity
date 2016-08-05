@@ -37,7 +37,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 #define inline __inline__
@@ -125,7 +125,7 @@ int main( int argc, char *argv[] )
    glutInitDisplayMode( GLUT_RGB );
 
    glutCreateWindow( argv[0] );
-   glewInit();
+   gladLoadGL();
 
    if ( argc > 1 ) {
       count = strtoul( argv[1], NULL, 0 );

@@ -34,13 +34,14 @@ libperf_la_SOURCES = \
 AM_CFLAGS = \
 	$(DEMO_CFLAGS) \
 	$(GLUT_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 
 AM_LDFLAGS = \
 	$(DEMO_LIBS) \
 	$(GLUT_LIBS)
 
-LDADD = libperf.la
+LDADD = libperf.la ../glad/libglad.la
 
 bin_PROGRAMS = \
 	copytex \
@@ -57,5 +58,5 @@ bin_PROGRAMS = \
 	glslstateschange
 endif
 
-glslstateschange_LDADD = libperf.la ../util/libutil.la
-glsl_compile_time_LDADD = ../util/libutil.la
+glslstateschange_LDADD = libperf.la ../util/libutil.la ../glad/libglad.la
+glsl_compile_time_LDADD = ../util/libutil.la ../glad/libglad.la

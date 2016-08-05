@@ -92,11 +92,6 @@ AC_EGREP_HEADER([glutInitContextProfile],
 		[AC_DEFINE(HAVE_FREEGLUT)],
 		[])
 
-dnl Check for GLEW
-PKG_CHECK_MODULES(GLEW, [glew >= 1.5.4])
-DEMO_CFLAGS="$DEMO_CFLAGS $GLEW_CFLAGS"
-DEMO_LIBS="$DEMO_LIBS $GLEW_LIBS"
-
 # LIBS was set by AC_CHECK_LIB above
 LIBS=""
 

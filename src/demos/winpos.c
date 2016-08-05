@@ -11,7 +11,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-#include "GL/glew.h"
+#include "glad/glad.h"
 #include "glut_wrap.h"
 
 #include "readtex.h"
@@ -70,12 +70,12 @@ static void reshape( int width, int height )
 
 static void init( void )
 {
-   if (GLEW_ARB_window_pos) {
+   if (GLAD_GL_ARB_window_pos) {
       printf("Using GL_ARB_window_pos\n");
       WindowPosFunc = glWindowPos2fARB;
    }
    else
-   if (GLEW_MESA_window_pos) {
+   if (GLAD_GL_MESA_window_pos) {
       printf("Using GL_MESA_window_pos\n");
       WindowPosFunc = glWindowPos2fMESA;
    }
@@ -104,7 +104,7 @@ int main( int argc, char *argv[] )
       exit(0);
    }
 
-   glewInit();
+   gladLoadGL();
 
    init();
 

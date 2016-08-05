@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <GL/glew.h>
+#include "gl_wrap.h"
 #include "glut_wrap.h"
 
 

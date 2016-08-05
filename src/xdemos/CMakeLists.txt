@@ -1,7 +1,7 @@
 include_directories (
 	${CMAKE_SOURCE_DIR}/src/util
 	${X11_INCLUDE_DIR}
-	${GLEW_INCLUDE_DIR}
+	${GLAD_INCLUDE_DIR}
 )
 
 link_directories (
@@ -12,7 +12,7 @@ link_libraries (
 	util
 	${X11_GL_LIB}
 	${X11_GLU_LIB}
-	${GLEW_glew_LIBRARY}
+	glad
 	${X11_X11_LIB}
 	${X11_Xext_LIB}
 )

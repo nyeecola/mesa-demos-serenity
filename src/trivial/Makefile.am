@@ -25,6 +25,7 @@
 AM_CFLAGS = \
 	$(DEMO_CFLAGS) \
 	$(GLUT_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 AM_LDFLAGS = \
 	$(DEMO_LIBS) \
@@ -209,3 +210,5 @@ bin_PROGRAMS = \
 	vp-tri-tex \
 	vp-unfilled
 endif
+
+LDADD = ../glad/libglad.la

@@ -25,6 +25,7 @@
 AM_CFLAGS = \
 	$(DEMO_CFLAGS) \
 	$(GLUT_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 AM_LDFLAGS = \
 	$(DEMO_LIBS) \
@@ -42,7 +43,7 @@ objview_SOURCES = \
 	skybox.c \
 	skybox.h
 
-objview_LDADD = ../util/libutil.la
+objview_LDADD = ../util/libutil.la ../glad/libglad.la
 
 EXTRA_DIST = \
 	bobcat.obj \

@@ -46,7 +46,7 @@
  *  use of the glHistogram() function.
  */
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -203,7 +203,7 @@ int main(int argc, char** argv)
    glutInitWindowSize(width, height);
    glutInitWindowPosition(100, 100);
    glutCreateWindow(argv[0]);
-   glewInit();
+   gladLoadGL();
    init();
    glutReshapeFunc(reshape);
    glutKeyboardFunc(keyboard);

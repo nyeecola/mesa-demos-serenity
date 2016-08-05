@@ -5,7 +5,7 @@
 
 
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -143,7 +143,7 @@ main(int argc, char **argv)
     if (glutCreateWindow(*argv) == GL_FALSE) {
        exit(1);
     }
-    glewInit();
+    gladLoadGL();
     glutReshapeFunc(Reshape);
     glutKeyboardFunc(Key);
     glutDisplayFunc(Draw);

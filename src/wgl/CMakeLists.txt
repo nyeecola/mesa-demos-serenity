@@ -1,12 +1,12 @@
 include_directories (
 	${OPENGL_INCLUDE_PATH}
-	${GLEW_INCLUDE_DIR}
+	${GLAD_INCLUDE_DIR}
 	${CMAKE_SOURCE_DIR}/src/xdemos
 )
 
 link_libraries (
 	${OPENGL_gl_LIBRARY}
-	${GLEW_glew_LIBRARY}
+	glad
 )
 
 add_executable (wglthreads wglthreads.c)

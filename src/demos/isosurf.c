@@ -32,7 +32,7 @@
 #include <windows.h>
 #undef CLIP_MASK
 #endif
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 #include "readtex.h"
@@ -1066,15 +1066,15 @@ int main(int argc, char **argv)
       exit(0);
    }
 
-   glewInit();
+   gladLoadGL();
 
    /* Make sure server supports vertex arrays */
-   if (!GLEW_VERSION_1_1)
+   if (!GLAD_GL_VERSION_1_1)
    {
       printf("Vertex arrays not supported by this renderer\n");
       allowed &= ~(LOCKED|DRAW_ARRAYS|DRAW_ELTS|ARRAY_ELT);
    }
-   else if (!GLEW_EXT_compiled_vertex_array)
+   else if (!GLAD_GL_EXT_compiled_vertex_array)
    {
       printf("Compiled vertex arrays not supported by this renderer\n");
       allowed &= ~LOCKED;

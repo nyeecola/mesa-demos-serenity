@@ -28,6 +28,7 @@
 AM_CFLAGS = \
 	$(DEMO_CFLAGS) \
 	$(GLUT_CFLAGS) \
+	-I$(top_srcdir)/src/glad/include \
 	-I$(top_srcdir)/src/util
 AM_LDFLAGS = \
 	$(DEMO_LIBS) \
@@ -169,22 +170,23 @@ noinst_PROGRAMS = \
 	zreaddraw
 endif
 
-afsmultiarb_LDADD = ../util/libutil.la
-arraytexture_LDADD = ../util/libutil.la
-auxbuffer_LDADD = -lX11
-bug_3195_LDADD = ../util/libutil.la
-bumpmap_LDADD = ../util/libutil.la
-floattex_LDADD = ../util/libutil.la
-fillrate_LDADD = ../util/libutil.la
-invert_LDADD = ../util/libutil.la
-jkrahntest_LDADD = -lX11
-linehacks_LDADD = ../util/libutil.la
-mipmap_limits_LDADD = ../util/libutil.la
-mipmap_view_LDADD = ../util/libutil.la
-sharedtex_LDADD = -lX11
-shader_interp_LDADD = ../util/libutil.la
-texobjshare_LDADD = -lX11
-texrect_LDADD = ../util/libutil.la
+LDADD = ../glad/libglad.la
+afsmultiarb_LDADD = ../util/libutil.la ../glad/libglad.la
+arraytexture_LDADD = ../util/libutil.la ../glad/libglad.la
+auxbuffer_LDADD = ../glad/libglad.la -lX11
+bug_3195_LDADD = ../util/libutil.la ../glad/libglad.la
+bumpmap_LDADD = ../util/libutil.la ../glad/libglad.la
+floattex_LDADD = ../util/libutil.la ../glad/libglad.la
+fillrate_LDADD = ../util/libutil.la ../glad/libglad.la
+invert_LDADD = ../util/libutil.la ../glad/libglad.la
+jkrahntest_LDADD = ../glad/libglad.la -lX11
+linehacks_LDADD = ../util/libutil.la ../glad/libglad.la
+mipmap_limits_LDADD = ../util/libutil.la ../glad/libglad.la
+mipmap_view_LDADD = ../util/libutil.la ../glad/libglad.la
+sharedtex_LDADD = ../glad/libglad.la -lX11
+shader_interp_LDADD = ../util/libutil.la ../glad/libglad.la
+texobjshare_LDADD = ../glad/libglad.la -lX11
+texrect_LDADD = ../util/libutil.la ../glad/libglad.la
 
 EXTRA_DIST = \
 	Makefile.am \

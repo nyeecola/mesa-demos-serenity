@@ -10,16 +10,9 @@ find_package (OpenGL REQUIRED)
 find_package (GLUT REQUIRED)
 find_package (X11)
 
-find_library (GLEW_glew_LIBRARY GLEW
-	/usr/lib
-)
-
-find_path (GLEW_INCLUDE_DIR GL/glew.h
-      /usr/include/GL
-)
+set (GLAD_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/glad/include)
 
 if (PKG_CONFIG_FOUND AND NOT WIN32)
-	pkg_check_modules (GLEW REQUIRED glew>=1.5.4)
 	pkg_check_modules (EGL egl)
 	pkg_check_modules (GLESV1 glesv1_cm)
 	pkg_check_modules (GLESV2 glesv2)
@@ -84,7 +77,6 @@ endif ()
 if (WIN32)
 	# Nobody likes to include windows.h:
 	# - Microsoft's GL/gl.h header depends on windows.h but doesn't include it;
-	# - GLEW temporarily defines the necessary defines but undefines them later
 	# - certain GLUT distributions don't include it;
 	# - most of our programs are meant to be portable so don't include it.
 	#

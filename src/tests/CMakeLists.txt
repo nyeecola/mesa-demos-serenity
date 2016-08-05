@@ -2,7 +2,7 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/src/util
 	${OPENGL_INCLUDE_PATH}
 	${GLUT_INCLUDE_DIR}
-	${GLEW_INCLUDE_DIR}
+	${GLAD_INCLUDE_DIR}
 )
 
 link_directories (
@@ -148,7 +148,7 @@ foreach (target ${targets})
 		${OPENGL_gl_LIBRARY}
 		${OPENGL_glu_LIBRARY}
 		${GLUT_glut_LIBRARY}
-		${GLEW_glew_LIBRARY}
+		glad
 	)
 	install (TARGETS ${subdir}_${target} DESTINATION ${subdir})
 endforeach (target)
@@ -169,7 +169,7 @@ if (X11_FOUND)
 		add_executable (${subdir}_${target} ${target}.c)
 		set_target_properties (${subdir}_${target} PROPERTIES OUTPUT_NAME ${target})
 		target_link_libraries (${subdir}_${target}
-			${GLEW_glew_LIBRARY}
+			glad
 			${X11_GLU_LIB}
 			${X11_GL_LIB}
 			${X11_Xext_LIB}

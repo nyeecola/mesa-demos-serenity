@@ -39,7 +39,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 static int Width = 400;
@@ -153,7 +153,7 @@ int main( int argc, char *argv[] )
    glutInitWindowSize( Width, Height );
    glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
    glutCreateWindow( "Bug #3050 Test" );
-   glewInit();
+   gladLoadGL();
    glutReshapeFunc( Reshape );
    glutKeyboardFunc( Key );
    glutDisplayFunc( Display );

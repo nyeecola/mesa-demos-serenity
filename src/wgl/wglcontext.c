@@ -22,21 +22,8 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <GL/glew.h>
-#include <GL/wglew.h>
-#include <GL/glext.h>
-
-#ifndef GL_CONTEXT_FLAG_DEBUG_BIT
-#define GL_CONTEXT_FLAG_DEBUG_BIT         0x00000002
-#endif
-#ifndef GL_CONTEXT_FLAG_ROBUST_ACCESS_BIT
-#define GL_CONTEXT_FLAG_ROBUST_ACCESS_BIT 0x00000004
-#endif
-
-#ifndef GL_CONTEXT_FLAG_NO_ERROR_BIT_KHR
-#define GL_CONTEXT_FLAG_NO_ERROR_BIT_KHR  0x00000008
-#endif
-
+#include <glad/glad.h>
+#include <glad/glad_wgl.h>
 
 static LRESULT CALLBACK
 WndProc(HWND hWnd,
@@ -168,7 +155,6 @@ create_context(int majorVersion, int minorVersion, int profileMask, int contextF
    PIXELFORMATDESCRIPTOR pfd;
    int pixelFormat;
    HGLRC tmp, ctx;
-   PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
 
    memset(&wc, 0, sizeof(wc));
    wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
@@ -237,10 +223,10 @@ create_context(int majorVersion, int minorVersion, int profileMask, int contextF
       return;
    }
 
-   wglCreateContextAttribsARB =
-      (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
+   gladLoadGL();
+   gladLoadWGL(hdc);
 
-   if (!wglCreateContextAttribsARB) {
+   if (!GLAD_WGL_ARB_create_context) {
       fprintf(stderr, "wglCreateContextAttribsARB isn't supported\n");
       return;
    }

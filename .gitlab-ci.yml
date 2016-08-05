@@ -50,7 +50,6 @@ x86_build:
       libegl1-mesa-dev
       libgbm-dev
       libgl1-mesa-dev
-      libglew-dev
       libudev-dev
       libwayland-dev
       libx11-dev

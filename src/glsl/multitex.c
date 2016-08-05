@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 #include "readtex.h"
 #include "shaderutil.h"
@@ -117,7 +117,7 @@ SetupVertexBuffer(void)
 static void
 DrawPolygonArray(void)
 {
-   void *vertPtr, *tex0Ptr, *tex1Ptr;
+   const void *vertPtr, *tex0Ptr, *tex1Ptr;
 
    if (UseVBO) {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, VBO);
@@ -399,7 +399,7 @@ main(int argc, char *argv[])
    glutInitWindowSize(500, 400);
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
    glutCreateWindow(Demo);
-   glewInit();
+   gladLoadGL();
    glutReshapeFunc(Reshape);
    glutKeyboardFunc(key);
    glutSpecialFunc(specialkey);

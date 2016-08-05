@@ -22,7 +22,7 @@
  * OF THIS SOFTWARE.
  */
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -172,7 +172,7 @@ int main(int argc, char **argv)
 	exit(1);
     }
 
-    glewInit();
+    gladLoadGL();
 
     Init();
 

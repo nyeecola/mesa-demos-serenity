@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 static void Init( void )
@@ -94,7 +94,7 @@ int main( int argc, char *argv[] )
    glutInitWindowSize( 250, 250 );
    glutInitDisplayMode( GLUT_DEPTH | GLUT_RGB | GLUT_SINGLE );
    glutCreateWindow(argv[0]);
-   glewInit();
+   gladLoadGL();
    glutReshapeFunc( Reshape );
    glutKeyboardFunc( Key );
    glutDisplayFunc( Display );

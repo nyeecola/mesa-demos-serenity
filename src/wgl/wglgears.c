@@ -32,8 +32,8 @@
 
 #include <assert.h>
 #include <windows.h>
-#include <GL/gl.h>
-#include <GL/wglext.h>
+#include <glad/glad.h>
+#include <glad/glad_wgl.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -44,14 +44,6 @@
 #ifndef M_PI
 #define M_PI 3.14159265
 #endif /* !M_PI */
-
-#ifndef WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB
-#define WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB 0x20A9
-#endif
-
-#ifndef GL_FRAMEBUFFER_SRGB
-#define GL_FRAMEBUFFER_SRGB 0x8db9
-#endif
 
 
 /* Global vars */
@@ -453,6 +445,8 @@ make_window(const char *name, int x, int y, int width, int height)
    hRC = wglCreateContext(hDC);
    wglMakeCurrent(hDC, hRC);
 
+   gladLoadWGL(hDC);
+
    if (use_srgb || samples > 0) {
       /* We can't query/use extension functions until after we've
        * created and bound a rendering context (done above).
@@ -461,10 +455,7 @@ make_window(const char *name, int x, int y, int width, int height)
        * create a new device context in order to use the pixel format returned
        * from wglChoosePixelFormatARB, and then create a new window.
        */
-      PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB_func =
-         (PFNWGLCHOOSEPIXELFORMATARBPROC)
-         wglGetProcAddress("wglChoosePixelFormatARB");
-      assert(wglChoosePixelFormatARB_func);
+      assert(GLAD_WGL_ARB_create_context);
 
       int int_attribs[64] = {
          WGL_SUPPORT_OPENGL_ARB, TRUE,
@@ -493,8 +484,8 @@ make_window(const char *name, int x, int y, int width, int height)
       UINT numFormats;
 
       pixelFormat = 0;
-      if (!wglChoosePixelFormatARB_func(hDC, int_attribs, float_attribs, 1,
-                                        &pixelFormat, &numFormats) ||
+      if (!wglChoosePixelFormatARB(hDC, int_attribs, float_attribs, 1,
+                                   &pixelFormat, &numFormats) ||
           !numFormats)
          goto nopixelformat;
 
@@ -519,6 +510,8 @@ make_window(const char *name, int x, int y, int width, int height)
       hRC = wglCreateContext(hDC);
       wglMakeCurrent(hDC, hRC);
    }
+
+   gladLoadGL();
 
    ShowWindow(hWnd, SW_SHOW);
    SetForegroundWindow(hWnd);
@@ -573,42 +566,14 @@ draw_frame()
 }
 
 /**
- * Determine whether or not a WGL extension is supported.
- */
-static int
-is_wgl_extension_supported(HDC hdc, const char *query)
-{
-   static const char *wgl_extensions = NULL;
-   const size_t len = strlen(query);
-   const char *ptr;
-
-   if (wgl_extensions == NULL) {
-      PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB_func =
-         (PFNWGLGETEXTENSIONSSTRINGARBPROC)
-         wglGetProcAddress("wglGetExtensionsStringARB");
-      if (!wglGetExtensionsStringARB_func)
-         return 0;
-
-      wgl_extensions = wglGetExtensionsStringARB_func(hdc);
-   }
-
-   ptr = strstr(wgl_extensions, query);
-   return ((ptr != NULL) && ((ptr[len] == ' ') || (ptr[len] == '\0')));
-}
-
-
-/**
  * Attempt to determine whether or not the display is synched to vblank.
  */
 static void
 query_vsync()
 {
    int interval = 0;
-   if (is_wgl_extension_supported(hDC, "WGL_EXT_swap_control")) {
-      PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT_func =
-         (PFNWGLGETSWAPINTERVALEXTPROC)
-         wglGetProcAddress("wglGetSwapIntervalEXT");
-      interval = wglGetSwapIntervalEXT_func();
+   if (GLAD_WGL_EXT_swap_control) {
+      interval = wglGetSwapIntervalEXT();
    }
 
    if (interval > 0) {

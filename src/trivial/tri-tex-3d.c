@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 
@@ -162,7 +162,7 @@ int main(int argc, char **argv)
 	exit(1);
     }
 
-    glewInit();
+    gladLoadGL();
 
     Init();
 

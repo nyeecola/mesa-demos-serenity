@@ -22,7 +22,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include "glut_wrap.h"
 
 /* Some <math.h> files do not define M_PI... */
@@ -113,7 +113,7 @@ makeFragShader(void)
 {
    GLint stat;
 
-   HaveShaders = GLEW_VERSION_2_0;
+   HaveShaders = GLAD_GL_VERSION_2_0;
    if (!HaveShaders)
       return;
 
@@ -618,7 +618,7 @@ main(int argc, char **argv)
     }
   }
   glutCreateWindow("sprite blast");
-  glewInit();
+  gladLoadGL();
   glutReshapeFunc(reshape);
   glutDisplayFunc(redraw);
   glutMouseFunc(mouse);

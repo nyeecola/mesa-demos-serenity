@@ -108,13 +108,17 @@ if (WIN32)
 endif (WIN32)
 
 if (MSVC)
+	message (WARNING "MSVC builds are unmainted.  MinGW-w64 is recommended.")
+
 	# Enable math constants defines
 	add_definitions (-D_USE_MATH_DEFINES)
 
 	# Silence several MSVC pedantic warnings
 	add_definitions (-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
 	add_definitions (-D_SCL_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
+	add_definitions (-wd4018) # signed/unsigned mismatch
 	add_definitions (-wd4244) # conversion' conversion from 'type1' to 'type2', possible loss of data
+	add_definitions (-wd4305) # truncation from 'type1' to 'type2'
 
 	# Use static runtime
 	# http://www.cmake.org/Wiki/CMake_FAQ#How_can_I_build_my_MSVC_application_with_a_static_runtime.3F

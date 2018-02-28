@@ -419,10 +419,10 @@ print_program_limits(GLenum target,
    int i;
 
    if (target == GL_VERTEX_PROGRAM_ARB) {
-      printf("    GL_VERTEX_PROGRAM_ARB:\n");
+      printf("  GL_ARB_vertex_program:\n");
    }
    else if (target == GL_FRAGMENT_PROGRAM_ARB) {
-      printf("    GL_FRAGMENT_PROGRAM_ARB:\n");
+      printf("  GL_ARB_fragment_program:\n");
    }
    else {
       return; /* something's wrong */
@@ -431,14 +431,14 @@ print_program_limits(GLenum target,
    for (i = 0; common_limits[i].token; i++) {
       extfuncs->GetProgramivARB(target, common_limits[i].token, max);
       if (glGetError() == GL_NO_ERROR) {
-         printf("        %s = %d\n", common_limits[i].name, max[0]);
+         printf("    %s = %d\n", common_limits[i].name, max[0]);
       }
    }
    if (target == GL_FRAGMENT_PROGRAM_ARB) {
       for (i = 0; fragment_limits[i].token; i++) {
          extfuncs->GetProgramivARB(target, fragment_limits[i].token, max);
          if (glGetError() == GL_NO_ERROR) {
-            printf("        %s = %d\n", fragment_limits[i].name, max[0]);
+            printf("    %s = %d\n", fragment_limits[i].name, max[0]);
          }
       }
    }

@@ -378,74 +378,6 @@ struct token_name
 };
 
 
-static void
-print_shader_limit_list(const struct token_name *lim)
-{
-   GLint max[1];
-   unsigned i;
-
-   for (i = 0; lim[i].token; i++) {
-      glGetIntegerv(lim[i].token, max);
-      if (glGetError() == GL_NO_ERROR) {
-	 printf("        %s = %d\n", lim[i].name, max[0]);
-      }
-   }
-}
-
-
-/**
- * Print interesting limits for vertex/fragment shaders.
- */
-static void
-print_shader_limits(GLenum target)
-{
-   static const struct token_name vertex_limits[] = {
-      { GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB, "GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB" },
-      { GL_MAX_VARYING_FLOATS_ARB, "GL_MAX_VARYING_FLOATS_ARB" },
-      { GL_MAX_VERTEX_ATTRIBS_ARB, "GL_MAX_VERTEX_ATTRIBS_ARB" },
-      { GL_MAX_TEXTURE_IMAGE_UNITS_ARB, "GL_MAX_TEXTURE_IMAGE_UNITS_ARB" },
-      { GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB, "GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB" },
-      { GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS_ARB, "GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS_ARB" },
-      { GL_MAX_TEXTURE_COORDS_ARB, "GL_MAX_TEXTURE_COORDS_ARB" },
-      { GL_MAX_VERTEX_OUTPUT_COMPONENTS  , "GL_MAX_VERTEX_OUTPUT_COMPONENTS  " },
-      { (GLenum) 0, NULL }
-   };
-   static const struct token_name fragment_limits[] = {
-      { GL_MAX_FRAGMENT_UNIFORM_COMPONENTS_ARB, "GL_MAX_FRAGMENT_UNIFORM_COMPONENTS_ARB" },
-      { GL_MAX_TEXTURE_COORDS_ARB, "GL_MAX_TEXTURE_COORDS_ARB" },
-      { GL_MAX_TEXTURE_IMAGE_UNITS_ARB, "GL_MAX_TEXTURE_IMAGE_UNITS_ARB" },
-      { GL_MAX_FRAGMENT_INPUT_COMPONENTS , "GL_MAX_FRAGMENT_INPUT_COMPONENTS " },
-      { (GLenum) 0, NULL }
-   };
-   static const struct token_name geometry_limits[] = {
-      { GL_MAX_GEOMETRY_UNIFORM_COMPONENTS, "GL_MAX_GEOMETRY_UNIFORM_COMPONENTS" },
-      { GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS, "GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS" },
-      { GL_MAX_GEOMETRY_OUTPUT_VERTICES  , "GL_MAX_GEOMETRY_OUTPUT_VERTICES  " },
-      { GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, "GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS" },
-      { GL_MAX_GEOMETRY_INPUT_COMPONENTS , "GL_MAX_GEOMETRY_INPUT_COMPONENTS " },
-      { GL_MAX_GEOMETRY_OUTPUT_COMPONENTS, "GL_MAX_GEOMETRY_OUTPUT_COMPONENTS" },
-      { (GLenum) 0, NULL }
-   };
-
-   switch (target) {
-   case GL_VERTEX_SHADER:
-      printf("    GL_VERTEX_SHADER_ARB:\n");
-      print_shader_limit_list(vertex_limits);
-      break;
-
-   case GL_FRAGMENT_SHADER:
-      printf("    GL_FRAGMENT_SHADER_ARB:\n");
-      print_shader_limit_list(fragment_limits);
-      break;
-
-   case GL_GEOMETRY_SHADER:
-      printf("    GL_GEOMETRY_SHADER:\n");
-      print_shader_limit_list(geometry_limits);
-      break;
-   }
-}
-
-
 /**
  * Print interesting limits for vertex/fragment programs.
  */
@@ -627,7 +559,17 @@ print_limits(const char *extensions, const char *oglstring, int version,
       { 1, GL_MAX_TESS_EVALUATION_OUTPUT_COMPONENTS, "GL_MAX_TESS_EVALUATION_OUTPUT_COMPONENTS", "GL_ARB_tessellation_shader" },
       { 1, GL_MAX_COMBINED_TESS_EVALUATION_UNIFORM_COMPONENTS, "GL_MAX_COMBINED_TESS_EVALUATION_UNIFORM_COMPONENTS", "GL_ARB_tessellation_shader" },
 #endif
-
+#if defined(GL_VERSION_2_0)
+      { 1, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, "GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS", "2.0" },
+      { 1, GL_MAX_DRAW_BUFFERS, "GL_MAX_DRAW_BUFFERS", "2.0" },
+      { 1, GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, "GL_MAX_FRAGMENT_UNIFORM_COMPONENTS", "2.0" },
+      { 1, GL_MAX_TEXTURE_COORDS, "GL_MAX_TEXTURE_COORDS", "2.0" },
+      { 1, GL_MAX_TEXTURE_IMAGE_UNITS, "GL_MAX_TEXTURE_IMAGE_UNITS", "2.0" },
+      { 1, GL_MAX_VARYING_FLOATS, "GL_MAX_VARYING_FLOATS", "2.0" },
+      { 1, GL_MAX_VERTEX_ATTRIBS, "GL_MAX_VERTEX_ATTRIBS", "2.0" },
+      { 1, GL_MAX_VERTEX_UNIFORM_COMPONENTS, "GL_MAX_VERTEX_UNIFORM_COMPONENTS", "2.0" },
+      { 1, GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, "GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS", "2.0" },
+#endif
 #if defined(GL_VERSION_3_0)
       { 1, GL_MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS, "GL_MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS", "3.0" },
       { 1, GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS, "GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS", "3.0" },
@@ -819,15 +761,6 @@ print_limits(const char *extensions, const char *oglstring, int version,
       print_program_limits(GL_FRAGMENT_PROGRAM_ARB, extfuncs);
    }
 #endif
-   if (extension_supported("GL_ARB_vertex_shader", extensions)) {
-      print_shader_limits(GL_VERTEX_SHADER_ARB);
-   }
-   if (extension_supported("GL_ARB_fragment_shader", extensions)) {
-      print_shader_limits(GL_FRAGMENT_SHADER_ARB);
-   }
-   if (version >= 32) {
-      print_shader_limits(GL_GEOMETRY_SHADER);
-   }
 }
 
 

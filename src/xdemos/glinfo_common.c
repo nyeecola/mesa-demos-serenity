@@ -745,8 +745,17 @@ print_limits(const char *extensions, const char *oglstring, int version,
       glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &n);
       printf("    GL_NUM_SHADING_LANGUAGE_VERSIONS = %d\n", n);
       for (i = 0; i < n; i++) {
-         printf("      %s\n", (const char *)
-                extfuncs->GetStringi(GL_SHADING_LANGUAGE_VERSION, i));
+         const char *lang = (const char *)
+            extfuncs->GetStringi(GL_SHADING_LANGUAGE_VERSION, i);
+         if (lang[0] == 0) {
+            /* The empty string is really GLSL 1.10.  Instead of
+             * printing an empty line, print (110).  For more info,
+             * see the GL 4.3 compatibility profile specification,
+             * page 628.
+             */
+            lang = "(110)";
+         }
+         printf("      %s\n", lang);
       }
    }
 #endif

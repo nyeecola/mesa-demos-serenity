@@ -464,7 +464,6 @@ print_limits(const char *extensions, const char *oglstring, int version,
       { 1, GL_MAX_ATTRIB_STACK_DEPTH, "GL_MAX_ATTRIB_STACK_DEPTH", NULL },
       { 1, GL_MAX_CLIENT_ATTRIB_STACK_DEPTH, "GL_MAX_CLIENT_ATTRIB_STACK_DEPTH", NULL },
       { 1, GL_MAX_CLIP_PLANES, "GL_MAX_CLIP_PLANES", NULL },
-      { 1, GL_MAX_COLOR_MATRIX_STACK_DEPTH, "GL_MAX_COLOR_MATRIX_STACK_DEPTH", "GL_ARB_imaging" },
       { 1, GL_MAX_ELEMENTS_VERTICES, "GL_MAX_ELEMENTS_VERTICES", NULL },
       { 1, GL_MAX_ELEMENTS_INDICES, "GL_MAX_ELEMENTS_INDICES", NULL },
       { 1, GL_MAX_EVAL_ORDER, "GL_MAX_EVAL_ORDER", NULL },
@@ -716,12 +715,16 @@ print_limits(const char *extensions, const char *oglstring, int version,
 
    /* these don't fit into the above mechanism, unfortunately */
    if (extension_supported("GL_ARB_imaging", extensions)) {
-      extfuncs->GetConvolutionParameteriv(GL_CONVOLUTION_2D,
-                                          GL_MAX_CONVOLUTION_WIDTH, max);
-      extfuncs->GetConvolutionParameteriv(GL_CONVOLUTION_2D,
-                                          GL_MAX_CONVOLUTION_HEIGHT, max+1);
+      GLint d;
       printf("  GL_ARB_imaging:\n");
-      printf("    GL_MAX_CONVOLUTION_WIDTH/HEIGHT = %d, %d\n", max[0], max[1]);
+      extfuncs->GetConvolutionParameteriv(GL_CONVOLUTION_2D,
+                                          GL_MAX_CONVOLUTION_WIDTH, &d);
+      printf("    GL_MAX_CONVOLUTION_WIDTH = %d\n", d);
+      extfuncs->GetConvolutionParameteriv(GL_CONVOLUTION_2D,
+                                          GL_MAX_CONVOLUTION_HEIGHT, &d);
+      printf("    GL_MAX_CONVOLUTION_HEIGHT = %d\n", d);
+      glGetIntegerv(GL_MAX_COLOR_MATRIX_STACK_DEPTH, &d);
+      printf("    GL_MAX_COLOR_MATRIX_STACK_DEPTH = %d\n", d);
    }
 
    if (extension_supported("GL_ARB_texture_compression", extensions)) {

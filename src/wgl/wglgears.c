@@ -43,7 +43,9 @@
 
 /* XXX this probably isn't very portable */
 #include <time.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 
 #ifndef M_PI
 #define M_PI 3.14159265

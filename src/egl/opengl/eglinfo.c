@@ -140,12 +140,21 @@ PrintExtensions(EGLDisplay d)
    const char *extensions, *p, *end, *next;
    int column;
 
-   puts(d == EGL_NO_DISPLAY ? "EGL client extensions string:" :
-                              "EGL extensions string:");
-
    extensions = eglQueryString(d, EGL_EXTENSIONS);
    if (!extensions)
       return NULL;
+
+#ifdef EGL_MESA_query_driver
+   if (strstr(extensions, "EGL_MESA_query_driver")) {
+      PFNEGLGETDISPLAYDRIVERNAMEPROC getDisplayDriverName =
+         (PFNEGLGETDISPLAYDRIVERNAMEPROC)
+            eglGetProcAddress("eglGetDisplayDriverName");
+      printf("EGL driver name: %s\n", getDisplayDriverName(d));
+   }
+#endif
+
+   puts(d == EGL_NO_DISPLAY ? "EGL client extensions string:" :
+                              "EGL extensions string:");
 
    column = 0;
    end = extensions + strlen(extensions);

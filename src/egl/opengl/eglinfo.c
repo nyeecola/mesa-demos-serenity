@@ -243,6 +243,10 @@ main(int argc, char *argv[])
            ret += doOneDisplay(getPlatformDisplay(EGL_PLATFORM_X11_EXT,
                                                   EGL_DEFAULT_DISPLAY,
                                                   NULL), "X11 platform");
+       if (strstr(clientext, "EGL_MESA_platform_surfaceless"))
+           ret += doOneDisplay(getPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA,
+                                                  EGL_DEFAULT_DISPLAY,
+                                                  NULL), "Surfaceless platform");
        if (strstr(clientext, "EGL_EXT_platform_device"))
            ret += doOneDisplay(getPlatformDisplay(EGL_PLATFORM_DEVICE_EXT,
                                                   EGL_DEFAULT_DISPLAY,

@@ -135,26 +135,10 @@ PrintConfigs(EGLDisplay d)
 
 
 static const char *
-PrintExtensions(EGLDisplay d)
+PrintExtensions(const char *extensions)
 {
-   const char *extensions, *p, *end, *next;
+   const char *p, *end, *next;
    int column;
-
-   extensions = eglQueryString(d, EGL_EXTENSIONS);
-   if (!extensions)
-      return NULL;
-
-#ifdef EGL_MESA_query_driver
-   if (strstr(extensions, "EGL_MESA_query_driver")) {
-      PFNEGLGETDISPLAYDRIVERNAMEPROC getDisplayDriverName =
-         (PFNEGLGETDISPLAYDRIVERNAMEPROC)
-            eglGetProcAddress("eglGetDisplayDriverName");
-      printf("EGL driver name: %s\n", getDisplayDriverName(d));
-   }
-#endif
-
-   puts(d == EGL_NO_DISPLAY ? "EGL client extensions string:" :
-                              "EGL extensions string:");
 
    column = 0;
    end = extensions + strlen(extensions);
@@ -185,6 +169,50 @@ PrintExtensions(EGLDisplay d)
    return extensions;
 }
 
+
+static const char *
+PrintDisplayExtensions(EGLDisplay d)
+{
+   const char *extensions;
+
+   extensions = eglQueryString(d, EGL_EXTENSIONS);
+   if (!extensions)
+      return NULL;
+
+#ifdef EGL_MESA_query_driver
+   if (strstr(extensions, "EGL_MESA_query_driver")) {
+      PFNEGLGETDISPLAYDRIVERNAMEPROC getDisplayDriverName =
+         (PFNEGLGETDISPLAYDRIVERNAMEPROC)
+            eglGetProcAddress("eglGetDisplayDriverName");
+      printf("EGL driver name: %s\n", getDisplayDriverName(d));
+   }
+#endif
+
+   puts(d == EGL_NO_DISPLAY ? "EGL client extensions string:" :
+                              "EGL extensions string:");
+
+   return PrintExtensions(extensions);
+}
+
+
+static const char *
+PrintDeviceExtensions(EGLDeviceEXT d)
+{
+   PFNEGLQUERYDEVICESTRINGEXTPROC queryDeviceString =
+     (PFNEGLQUERYDEVICESTRINGEXTPROC)
+     eglGetProcAddress("eglQueryDeviceStringEXT");
+   const char *extensions;
+
+   puts("EGL device extensions string:");
+
+   extensions = queryDeviceString(d, EGL_EXTENSIONS);
+   if (!extensions)
+      return NULL;
+
+   return PrintExtensions(extensions);
+}
+
+
 static int
 doOneDisplay(EGLDisplay d, const char *name)
 {
@@ -203,7 +231,7 @@ doOneDisplay(EGLDisplay d, const char *name)
    printf("EGL client APIs: %s\n", eglQueryString(d, EGL_CLIENT_APIS));
 #endif
 
-   PrintExtensions(d);
+   PrintDisplayExtensions(d);
 
    PrintConfigs(d);
    eglTerminate(d);
@@ -211,13 +239,60 @@ doOneDisplay(EGLDisplay d, const char *name)
    return 0;
 }
 
+
+static int
+doOneDevice(EGLDeviceEXT d, int i)
+{
+   PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplay =
+     (PFNEGLGETPLATFORMDISPLAYEXTPROC)
+     eglGetProcAddress("eglGetPlatformDisplayEXT");
+
+   printf("Device #%d:\n\n", i);
+
+   PrintDeviceExtensions(d);
+
+   return doOneDisplay(getPlatformDisplay(EGL_PLATFORM_DEVICE_EXT, d, NULL),
+                       "Platform Device");
+}
+
+
+static int
+doDevices(const char *name)
+{
+   PFNEGLQUERYDEVICESEXTPROC queryDevices =
+     (PFNEGLQUERYDEVICESEXTPROC) eglGetProcAddress("eglQueryDevicesEXT");
+   EGLDeviceEXT *devices;
+   EGLint max_devices, num_devices;
+   EGLint i;
+   int ret = 0;
+
+   printf("%s:\n", name);
+
+   if (!queryDevices(0, NULL, &max_devices))
+      return 1;
+   devices = calloc(sizeof(EGLDeviceEXT), max_devices);
+   if (!devices)
+      return 1;
+   if (!queryDevices(max_devices, devices, &num_devices))
+     num_devices = 0;
+
+   for (i = 0; i < num_devices; ++i) {
+       ret += doOneDevice(devices[i], i);
+   }
+
+   free(devices);
+
+   return ret;
+}
+
+
 int
 main(int argc, char *argv[])
 {
    int ret = 0;
    const char *clientext;
 
-   clientext = PrintExtensions(EGL_NO_DISPLAY);
+   clientext = PrintDisplayExtensions(EGL_NO_DISPLAY);
    printf("\n");
 
    if (strstr(clientext, "EGL_EXT_platform_base")) {
@@ -247,10 +322,9 @@ main(int argc, char *argv[])
            ret += doOneDisplay(getPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA,
                                                   EGL_DEFAULT_DISPLAY,
                                                   NULL), "Surfaceless platform");
-       if (strstr(clientext, "EGL_EXT_platform_device"))
-           ret += doOneDisplay(getPlatformDisplay(EGL_PLATFORM_DEVICE_EXT,
-                                                  EGL_DEFAULT_DISPLAY,
-                                                  NULL), "Device platform");
+       if (strstr(clientext, "EGL_EXT_device_enumeration") &&
+           strstr(clientext, "EGL_EXT_platform_device"))
+           ret += doDevices("Device platform");
    }
    else {
       ret = doOneDisplay(eglGetDisplay(EGL_DEFAULT_DISPLAY), "Default display");

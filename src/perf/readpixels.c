@@ -38,7 +38,6 @@ int WinWidth = 1000, WinHeight = 1000;
 static GLuint VBO;
 
 static const GLboolean DrawPoint = GL_TRUE;
-static const GLboolean BufferSubDataInHalves = GL_TRUE;
 
 static const GLfloat Vertex0[2] = { 0.0, 0.0 };
 

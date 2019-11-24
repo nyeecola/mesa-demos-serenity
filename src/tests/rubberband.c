@@ -30,10 +30,6 @@ static GLboolean LogicOp = GL_TRUE;
 
 static GLboolean RedrawBackground = GL_TRUE;
 
-static const GLfloat red[4] = {1.0, 0.2, 0.2, 1.0};
-static const GLfloat green[4] = {0.2, 1.0, 0.2, 1.0};
-static const GLfloat blue[4] = {0.2, 0.2, 1.0, 1.0};
-
 static int color = 0;
 
 

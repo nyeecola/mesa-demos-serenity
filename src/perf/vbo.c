@@ -44,7 +44,6 @@ static GLsizei SubSize = 0;
 static GLubyte *VBOData = NULL;  /* array[DATA_SIZE] */
 
 static const GLboolean DrawPoint = GL_TRUE;
-static const GLboolean BufferSubDataInHalves = GL_TRUE;
 
 static const GLfloat Vertex0[2] = { 0.0, 0.0 };
 

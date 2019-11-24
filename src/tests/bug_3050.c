@@ -44,8 +44,6 @@
 
 static int Width = 400;
 static int Height = 200;
-static const GLfloat Near = 5.0, Far = 25.0;
-
 
 static void Display( void )
 {

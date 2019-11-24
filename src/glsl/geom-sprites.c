@@ -25,10 +25,6 @@ static int uPointSize = -1, uInverseViewportSize = -1;
 static const int NumPoints = 50;
 static float Points[100][3];
 
-static const GLfloat Red[4] = {1, 0, 0, 1};
-static const GLfloat Green[4] = {0, 1, 0, 0};
-
-
 static void
 CheckError(int line)
 {

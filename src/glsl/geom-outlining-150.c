@@ -245,7 +245,6 @@ Key(unsigned char key, int x, int y)
 static void
 Init(void)
 {
-   const GLubyte *version;
    static const char *vertShaderText =
       "#version 150 \n"
       "uniform mat4 ModelViewProjection; \n"

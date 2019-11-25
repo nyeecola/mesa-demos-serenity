@@ -101,7 +101,6 @@ static void Init( int argc, char *argv[] , Display *dpy, int screen, Window win)
 {
    GLuint texObj = 100;
    const char *file;
-   void *glx_memory = NULL;
 
    if (!query_extension("GL_NV_texture_rectangle")) {
       printf("Sorry, GL_NV_texture_rectangle is required\n");

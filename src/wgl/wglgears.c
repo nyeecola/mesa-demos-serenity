@@ -555,7 +555,7 @@ main(int argc, char *argv[])
       }
    }
 
-   make_window("glxgears", 0, 0, 300, 300);
+   make_window("wglgears", 0, 0, 300, 300);
    reshape(300, 300);
 
    if (printInfo) {

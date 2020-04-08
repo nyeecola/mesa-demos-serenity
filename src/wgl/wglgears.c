@@ -341,6 +341,11 @@ WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       else if (wParam == VK_ESCAPE)
          PostQuitMessage(0);
       return 0;
+#if WINVER >= 0x0605
+   case WM_NCCREATE:
+       EnableNonClientDpiScaling(hWnd);
+       break;
+#endif
    }
 
    return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -375,6 +380,10 @@ make_window(const char *name, int x, int y, int width, int height)
       0,
       0, 0, 0
    };
+
+#if WINVER >= 0x0605
+   SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+#endif
 
    winrect.left = (long)0;
    winrect.right = (long)width;

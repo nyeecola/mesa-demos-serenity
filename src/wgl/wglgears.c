@@ -65,6 +65,7 @@ static GLfloat view_rotx = 20.0, view_roty = 30.0, view_rotz = 0.0;
 static GLint gear1, gear2, gear3;
 static GLfloat angle = 0.0;
 
+static GLboolean fullscreen = GL_FALSE;
 static GLint samples = 0;
 static GLboolean use_srgb = GL_FALSE;
 static GLboolean animate = GL_TRUE;
@@ -75,6 +76,7 @@ void usage(void)
 {
    printf("Usage:\n");
    printf("-samples N         run in multisample mode with at least N samples\n");
+   printf("-fullscreen        run in fullscreen mode\n");
    printf("-info              display OpenGL renderer info\n");
    printf("-geometry WxH+X+Y  window geometry\n");
 }
@@ -379,10 +381,6 @@ make_window(const char *name, int x, int y, int width, int height)
       0, 0, 0
    };
 
-#if WINVER >= 0x0605
-   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
-#endif
-
    winrect.left = (long)0;
    winrect.right = (long)width;
    winrect.top = (long) 0;
@@ -402,8 +400,13 @@ make_window(const char *name, int x, int y, int width, int height)
    RegisterClass(&wc);
 
    dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-   dwStyle = WS_OVERLAPPEDWINDOW;
-   AdjustWindowRectEx(&winrect, dwStyle, FALSE, dwExStyle);
+   if (!fullscreen) {
+      dwStyle = WS_OVERLAPPEDWINDOW;
+      AdjustWindowRectEx(&winrect, dwStyle, FALSE, dwExStyle);
+   }
+   else {
+      dwStyle = WS_POPUP;
+   }
 
    hWnd = CreateWindowEx(dwExStyle, name, name,
                          WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dwStyle,
@@ -411,6 +414,17 @@ make_window(const char *name, int x, int y, int width, int height)
                          winrect.right - winrect.left,
                          winrect.bottom - winrect.top,
                          NULL, NULL, hInst, NULL);
+
+   if (fullscreen) {
+      DEVMODE devmode;
+      memset(&devmode, 0, sizeof(DEVMODE));
+      devmode.dmSize = sizeof(DEVMODE);
+      devmode.dmPelsWidth = width;
+      devmode.dmPelsHeight = height;
+      devmode.dmBitsPerPel = 24;
+      devmode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+      ChangeDisplaySettings(&devmode, CDS_FULLSCREEN);
+   }
 
    hDC = GetDC(hWnd);
    pixelFormat = ChoosePixelFormat(hDC, &pfd);
@@ -674,6 +688,9 @@ main(int argc, char *argv[])
          samples = strtod(argv[i + 1], NULL);
          ++i;
       }
+      else if (strcmp(argv[i], "-fullscreen") == 0) {
+         fullscreen = GL_TRUE;
+      }
       else if (strcmp(argv[i], "-geometry") == 0) {
          parse_geometry(argv[i+1], &x, &y, &winWidth, &winHeight);
          i++;
@@ -682,6 +699,16 @@ main(int argc, char *argv[])
          usage();
          return -1;
       }
+   }
+
+#if WINVER >= 0x0605
+   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+#endif
+
+   if (fullscreen) {
+       x = 0; y = 0;
+       winWidth = GetSystemMetrics(SM_CXSCREEN);
+       winHeight = GetSystemMetrics(SM_CYSCREEN);
    }
 
    make_window("wglgears", x, y, winWidth, winHeight);

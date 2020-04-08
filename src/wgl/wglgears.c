@@ -78,11 +78,8 @@ static GLboolean use_srgb = GL_FALSE;
 static
 void usage(void)
 {
-   fprintf (stderr, "usage:  %s [options]\n", ProgramName);
-   fprintf (stderr, "-info\tPrint additional GL information.\n");
-   fprintf (stderr, "-h\tPrint this help page.\n");
-   fprintf (stderr, "\n");
-   exit(EXIT_FAILURE);
+   fprintf (stderr, "usage:\n");
+   fprintf (stderr, "-info  display OpenGL renderer info\n");
 }
 
 
@@ -543,15 +540,12 @@ main(int argc, char *argv[])
       if (strcmp(argv[i], "-info") == 0) {
          printInfo = GL_TRUE;
       }
-      else if (strcmp(argv[i], "-h") == 0) {
-         usage();
-      }
       else if (strcmp(argv[i], "-srgb") == 0) {
          use_srgb = GL_TRUE;
       }
       else {
-        fprintf(stderr, "%s: Unsupported option '%s'.\n", ProgramName, argv[i]);
-        usage();
+         usage();
+         return -1;
       }
    }
 

@@ -79,7 +79,8 @@ static
 void usage(void)
 {
    fprintf (stderr, "usage:\n");
-   fprintf (stderr, "-info  display OpenGL renderer info\n");
+   fprintf (stderr, "-info              display OpenGL renderer info\n");
+   fprintf (stderr, "-geometry WxH+X+Y  window geometry\n");
 }
 
 
@@ -528,9 +529,62 @@ event_loop(void)
 }
 
 
+static void
+parse_geometry(const char *str, int *x, int *y, unsigned int *w, unsigned int *h)
+{
+   char *end;
+   if (*str == '=')
+      str++;
+
+   long tw = LONG_MAX;
+   if (isdigit(*str)) {
+      tw = strtol(str, &end, 10);
+      if (str == end)
+         return;
+      str = end;
+   }
+
+   long th = LONG_MAX;
+   if (tolower(*str) == 'x') {
+      str++;
+      th = strtol(str, &end, 10);
+      if (str== end)
+         return;
+      str = end;
+   }
+
+   long tx = LONG_MAX;
+   if (*str == '+' || *str == '-') {
+      tx = strtol(str, &end, 10);
+      if (str == end)
+         return;
+      str = end;
+   }
+
+   long ty = LONG_MAX;
+   if (*str == '+' || *str == '-') {
+      ty = strtol(str, &end, 10);
+      if (str == end)
+         return;
+      str = end;
+   }
+
+   if (tw < LONG_MAX)
+      *w = tw;
+   if (th < LONG_MAX)
+      *h = th;
+   if (tx < INT_MAX)
+      *x = tx;
+   if (ty < INT_MAX)
+      *y = ty;
+}
+
+
 int
 main(int argc, char *argv[])
 {
+   unsigned int winWidth = 300, winHeight = 300;
+   int x = 0, y = 0;
    int i;
    GLboolean printInfo = GL_FALSE;
 
@@ -543,14 +597,18 @@ main(int argc, char *argv[])
       else if (strcmp(argv[i], "-srgb") == 0) {
          use_srgb = GL_TRUE;
       }
+      else if (strcmp(argv[i], "-geometry") == 0) {
+         parse_geometry(argv[i+1], &x, &y, &winWidth, &winHeight);
+         i++;
+      }
       else {
          usage();
          return -1;
       }
    }
 
-   make_window("wglgears", 0, 0, 300, 300);
-   reshape(300, 300);
+   make_window("wglgears", x, y, winWidth, winHeight);
+   reshape(winWidth, winHeight);
 
    if (printInfo) {
       printf("GL_RENDERER   = %s\n", (char *) glGetString(GL_RENDERER));

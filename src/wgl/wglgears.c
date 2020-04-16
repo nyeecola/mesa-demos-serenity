@@ -72,10 +72,10 @@ static GLboolean use_srgb = GL_FALSE;
 static
 void usage(void)
 {
-   fprintf (stderr, "usage:\n");
-   fprintf (stderr, "-samples N         run in multisample mode with at least N samples\n");
-   fprintf (stderr, "-info              display OpenGL renderer info\n");
-   fprintf (stderr, "-geometry WxH+X+Y  window geometry\n");
+   printf("Usage:\n");
+   printf("-samples N         run in multisample mode with at least N samples\n");
+   printf("-info              display OpenGL renderer info\n");
+   printf("-geometry WxH+X+Y  window geometry\n");
 }
 
 

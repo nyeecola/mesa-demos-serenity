@@ -461,8 +461,6 @@ make_window(const char *name, int x, int y, int width, int height)
          exit(0);
       }
       assert(numFormats > 0);
-      printf("Chose sRGB pixel format %d (0x%x)\n", pixelFormat, pixelFormat);
-      fflush(stdout);
 
       PIXELFORMATDESCRIPTOR newPfd;
       DescribePixelFormat(hDC, pixelFormat, sizeof(pfd), &newPfd);

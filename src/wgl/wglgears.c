@@ -61,8 +61,6 @@ static HWND hWnd;
 static HINSTANCE hInst;
 static RECT winrect;
 
-static const char *ProgramName;      /* program name (from argv[0]) */
-
 static GLfloat view_rotx = 20.0, view_roty = 30.0, view_rotz = 0.0;
 static GLint gear1, gear2, gear3;
 static GLfloat angle = 0.0;
@@ -630,8 +628,6 @@ main(int argc, char *argv[])
    int x = 0, y = 0;
    int i;
    GLboolean printInfo = GL_FALSE;
-
-   ProgramName = argv[0];
 
    for (i = 1; i < argc; i++) {
       if (strcmp(argv[i], "-info") == 0) {

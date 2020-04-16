@@ -529,6 +529,31 @@ draw_frame()
    }
 }
 
+/**
+ * Determine whether or not a WGL extension is supported.
+ */
+static int
+is_wgl_extension_supported(HDC hdc, const char *query)
+{
+   static const char *wgl_extensions = NULL;
+   const size_t len = strlen(query);
+   const char *ptr;
+
+   if (wgl_extensions == NULL) {
+      PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB_func =
+         (PFNWGLGETEXTENSIONSSTRINGARBPROC)
+         wglGetProcAddress("wglGetExtensionsStringARB");
+      if (!wglGetExtensionsStringARB_func)
+         return 0;
+
+      wgl_extensions = wglGetExtensionsStringARB_func(hdc);
+   }
+
+   ptr = strstr(wgl_extensions, query);
+   return ((ptr != NULL) && ((ptr[len] == ' ') || (ptr[len] == '\0')));
+}
+
+
 static void
 event_loop(void)
 {

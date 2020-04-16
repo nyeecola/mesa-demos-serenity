@@ -67,6 +67,7 @@ static GLfloat angle = 0.0;
 
 static GLint samples = 0;
 static GLboolean use_srgb = GL_FALSE;
+static GLboolean animate = GL_TRUE;
 
 
 static
@@ -335,6 +336,8 @@ WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
          view_rotx -= 5.0;
       else if (wParam == VK_ESCAPE)
          PostQuitMessage(0);
+      else if (wParam == 'A')
+         animate = !animate;
       return 0;
 #if WINVER >= 0x0605
    case WM_NCCREATE:
@@ -501,10 +504,12 @@ draw_frame()
    dt = t - tRot0;
    tRot0 = t;
 
-   /* advance rotation for next frame */
-   angle += 70.0 * dt;  /* 70 degrees per second */
-   if (angle > 3600.0)
-      angle -= 3600.0;
+   if (animate) {
+      /* advance rotation for next frame */
+      angle += 70.0 * dt;  /* 70 degrees per second */
+      if (angle > 3600.0)
+         angle -= 3600.0;
+   }
 
    draw();
    SwapBuffers(hDC);

@@ -382,7 +382,7 @@ make_window(const char *name, int x, int y, int width, int height)
    };
 
 #if WINVER >= 0x0605
-   SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
 #endif
 
    winrect.left = (long)0;

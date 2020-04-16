@@ -411,10 +411,8 @@ make_window(const char *name, int x, int y, int width, int height)
 
    hDC = GetDC(hWnd);
    pixelFormat = ChoosePixelFormat(hDC, &pfd);
-   if (!pixelFormat) {
-      printf("ChoosePixelFormat failed\n");
-      exit(1);
-   }
+   if (!pixelFormat)
+      goto nopixelformat;
 
    SetPixelFormat(hDC, pixelFormat, &pfd);
    hRC = wglCreateContext(hDC);
@@ -461,11 +459,9 @@ make_window(const char *name, int x, int y, int width, int height)
 
       pixelFormat = 0;
       if (!wglChoosePixelFormatARB_func(hDC, int_attribs, float_attribs, 1,
-                                        &pixelFormat, &numFormats)) {
-         printf("wglChoosePixelFormatARB failed\n");
-         exit(0);
-      }
-      assert(numFormats > 0);
+                                        &pixelFormat, &numFormats) ||
+          !numFormats)
+         goto nopixelformat;
 
       PIXELFORMATDESCRIPTOR newPfd;
       DescribePixelFormat(hDC, pixelFormat, sizeof(pfd), &newPfd);
@@ -481,6 +477,16 @@ make_window(const char *name, int x, int y, int width, int height)
    ShowWindow(hWnd, SW_SHOW);
    SetForegroundWindow(hWnd);
    SetFocus(hWnd);
+   return;
+
+nopixelformat:
+   printf("Error: couldn't get an RGB, Double-buffered");
+   if (samples > 0)
+      printf(", Multisample");
+   if (use_srgb)
+      printf(", sRGB");
+   printf(" pixelformat\n");
+   exit(1);
 }
 
 static void

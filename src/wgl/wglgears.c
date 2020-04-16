@@ -41,12 +41,6 @@
 #include <ctype.h>
 #include <math.h>
 
-/* XXX this probably isn't very portable */
-#include <time.h>
-#ifndef _MSC_VER
-#include <unistd.h>
-#endif
-
 #ifndef M_PI
 #define M_PI 3.14159265
 #endif /* !M_PI */
@@ -88,10 +82,10 @@ void usage(void)
 
 
 /* return current time (in seconds) */
-static int
+static double
 current_time(void)
 {
-   return (int)time(NULL);
+   return timeGetTime() / 1000.0;
 }
 
 
@@ -520,13 +514,49 @@ make_window(const char *name, int x, int y, int width, int height)
    SetFocus(hWnd);
 }
 
+static void
+draw_frame()
+{
+   static int frames = 0;
+   static double tRot0 = -1.0, tRate0 = -1.0;
+   double dt, t = current_time();
+
+   if (tRot0 < 0.0)
+      tRot0 = t;
+   dt = t - tRot0;
+   tRot0 = t;
+
+   /* advance rotation for next frame */
+   angle += 70.0 * dt;  /* 70 degrees per second */
+   if (angle > 3600.0)
+      angle -= 3600.0;
+
+   draw();
+   SwapBuffers(hDC);
+
+   frames++;
+
+   if (tRate0 < 0.0)
+      tRate0 = t;
+   if (t - tRate0 >= 5.0) {
+      GLfloat seconds = t - tRate0;
+      GLfloat fps = frames / seconds;
+      printf("%d frames in %3.1f seconds = %6.3f FPS\n", frames, seconds,
+             fps);
+      fflush(stdout);
+      tRate0 = t;
+      frames = 0;
+   }
+}
 
 static void
 event_loop(void)
 {
    MSG msg;
-   int t, t0 = current_time();
-   int frames = 0;
+
+   TIMECAPS tc;
+   timeGetDevCaps(&tc, sizeof(tc));
+   timeBeginPeriod(tc.wPeriodMin);
 
    while(1) {
       if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -535,21 +565,10 @@ event_loop(void)
          DispatchMessage(&msg);
       }
 
-      angle += 2.0;
-      draw();
-      SwapBuffers(hDC);
-
-      /* calc framerate */
-      t = current_time();
-      frames++;
-      if (t - t0 >= 5.0) {
-         GLfloat s = t - t0;
-         GLfloat fps = frames / s;
-         printf("%d frames in %3.1f seconds = %6.3f FPS\n", frames, s, fps);
-         t0 = t;
-         frames = 0;
-      }
+      draw_frame();
    }
+
+   timeEndPeriod(tc.wPeriodMin);
 }
 
 

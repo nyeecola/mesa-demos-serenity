@@ -554,6 +554,33 @@ is_wgl_extension_supported(HDC hdc, const char *query)
 }
 
 
+/**
+ * Attempt to determine whether or not the display is synched to vblank.
+ */
+static void
+query_vsync()
+{
+   int interval = 0;
+   if (is_wgl_extension_supported(hDC, "WGL_EXT_swap_control")) {
+      PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT_func =
+         (PFNWGLGETSWAPINTERVALEXTPROC)
+         wglGetProcAddress("wglGetSwapIntervalEXT");
+      interval = wglGetSwapIntervalEXT_func();
+   }
+
+   if (interval > 0) {
+      printf("Running synchronized to the vertical refresh.  The framerate should be\n");
+      if (interval == 1) {
+         printf("approximately the same as the monitor refresh rate.\n");
+      }
+      else if (interval > 1) {
+         printf("approximately 1/%d the monitor refresh rate.\n",
+                interval);
+      }
+   }
+}
+
+
 static void
 event_loop(void)
 {
@@ -659,6 +686,7 @@ main(int argc, char *argv[])
 
    make_window("wglgears", x, y, winWidth, winHeight);
    reshape(winWidth, winHeight);
+   query_vsync();
 
    if (printInfo) {
       printf("GL_RENDERER   = %s\n", (char *) glGetString(GL_RENDERER));

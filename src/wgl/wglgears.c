@@ -72,6 +72,8 @@ static const char *ProgramName;      /* program name (from argv[0]) */
 static GLfloat view_rotx = 20.0, view_roty = 30.0, view_rotz = 0.0;
 static GLint gear1, gear2, gear3;
 static GLfloat angle = 0.0;
+
+static GLint samples = 0;
 static GLboolean use_srgb = GL_FALSE;
 
 
@@ -79,6 +81,7 @@ static
 void usage(void)
 {
    fprintf (stderr, "usage:\n");
+   fprintf (stderr, "-samples N         run in multisample mode with at least N samples\n");
    fprintf (stderr, "-info              display OpenGL renderer info\n");
    fprintf (stderr, "-geometry WxH+X+Y  window geometry\n");
 }
@@ -429,7 +432,7 @@ make_window(const char *name, int x, int y, int width, int height)
       exit(0);
    }
 
-   if (use_srgb) {
+   if (use_srgb || samples > 0) {
       /* We can't query/use extension functions until after we've
        * created and bound a rendering context (done above).
        *
@@ -442,15 +445,29 @@ make_window(const char *name, int x, int y, int width, int height)
          wglGetProcAddress("wglChoosePixelFormatARB");
       assert(wglChoosePixelFormatARB_func);
 
-      static const int int_attribs[] = {
+      int int_attribs[64] = {
          WGL_SUPPORT_OPENGL_ARB, TRUE,
          WGL_DRAW_TO_WINDOW_ARB, TRUE,
          WGL_COLOR_BITS_ARB, 24,  // at least 24-bits of RGB
          WGL_DEPTH_BITS_ARB, 24,
          WGL_DOUBLE_BUFFER_ARB, TRUE,
          WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB, TRUE,
-         0
       };
+      int i = 10;
+
+      if (use_srgb) {
+         int_attribs[i++] = WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB;
+         int_attribs[i++] = TRUE;
+      }
+      if (samples > 0) {
+         int_attribs[i++] = WGL_SAMPLE_BUFFERS_ARB;
+         int_attribs[i++] = 1;
+         int_attribs[i++] = WGL_SAMPLES_ARB;
+         int_attribs[i++] = samples;
+      }
+
+      int_attribs[i++] = 0;
+
       static const float float_attribs[] = { 0 };
       UINT numFormats;
 
@@ -603,6 +620,10 @@ main(int argc, char *argv[])
       }
       else if (strcmp(argv[i], "-srgb") == 0) {
          use_srgb = GL_TRUE;
+      }
+      else if (i < argc - 1 && strcmp(argv[i], "-samples") == 0) {
+         samples = strtod(argv[i + 1], NULL);
+         ++i;
       }
       else if (strcmp(argv[i], "-geometry") == 0) {
          parse_geometry(argv[i+1], &x, &y, &winWidth, &winHeight);

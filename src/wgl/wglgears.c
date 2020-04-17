@@ -396,33 +396,29 @@ make_window(const char *name, int x, int y, int width, int height)
    wc.hbrBackground = NULL;
    wc.lpszMenuName = NULL;
    wc.lpszClassName = name;
-   if (!RegisterClass(&wc)) {
-      printf("failed to register class\n");
-      exit(0);
-   }
+   RegisterClass(&wc);
 
    dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
    dwStyle = WS_OVERLAPPEDWINDOW;
    AdjustWindowRectEx(&winrect, dwStyle, FALSE, dwExStyle);
 
-   if (!(hWnd = CreateWindowEx(dwExStyle, name, name,
-                               WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dwStyle,
-                               x, y,
-                               winrect.right - winrect.left,
-                               winrect.bottom - winrect.top,
-                               NULL, NULL, hInst, NULL))) {
-      printf("failed to create window\n");
+   hWnd = CreateWindowEx(dwExStyle, name, name,
+                         WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dwStyle,
+                         x, y,
+                         winrect.right - winrect.left,
+                         winrect.bottom - winrect.top,
+                         NULL, NULL, hInst, NULL);
+
+   hDC = GetDC(hWnd);
+   pixelFormat = ChoosePixelFormat(hDC, &pfd);
+   if (!pixelFormat) {
+      printf("ChoosePixelFormat failed\n");
       exit(0);
    }
 
-   if (!(hDC = GetDC(hWnd)) ||
-       !(pixelFormat = ChoosePixelFormat(hDC, &pfd)) ||
-       !(SetPixelFormat(hDC, pixelFormat, &pfd)) ||
-       !(hRC = wglCreateContext(hDC)) ||
-       !(wglMakeCurrent(hDC, hRC))) {
-      printf("failed to initialise opengl\n");
-      exit(0);
-   }
+   SetPixelFormat(hDC, pixelFormat, &pfd);
+   hRC = wglCreateContext(hDC);
+   wglMakeCurrent(hDC, hRC);
 
    if (use_srgb || samples > 0) {
       /* We can't query/use extension functions until after we've
@@ -479,32 +475,17 @@ make_window(const char *name, int x, int y, int width, int height)
       wglDeleteContext(hRC);
       DeleteDC(hDC);
 
-      if (!(hWnd = CreateWindowEx(dwExStyle, name, name,
-                                  WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dwStyle,
-                                  0, 0,
-                                  winrect.right - winrect.left,
-                                  winrect.bottom - winrect.top,
-                                  NULL, NULL, hInst, NULL))) {
-         printf("failed to create window\n");
-         exit(0);
-      }
+      hWnd = CreateWindowEx(dwExStyle, name, name,
+                            WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dwStyle,
+                            0, 0,
+                            winrect.right - winrect.left,
+                            winrect.bottom - winrect.top,
+                            NULL, NULL, hInst, NULL);
 
-      if (!(hDC = GetDC(hWnd))) {
-         printf("GetDC() failed.\n");
-         exit(0);
-      }
-      if (!SetPixelFormat(hDC, pixelFormat, &pfd)) {
-         printf("SetPixelFormat failed %d\n", (int) GetLastError());
-         exit(0);
-      }
-      if (!(hRC = wglCreateContext(hDC))) {
-         printf("wglCreateContext() failed\n");
-         exit(0);
-      }
-      if (!wglMakeCurrent(hDC, hRC)) {
-         printf("wglMakeCurrent() failed\n");
-         exit(0);
-      }
+      hDC = GetDC(hWnd);
+      SetPixelFormat(hDC, pixelFormat, &pfd);
+      hRC = wglCreateContext(hDC);
+      wglMakeCurrent(hDC, hRC);
    }
 
    ShowWindow(hWnd, SW_SHOW);

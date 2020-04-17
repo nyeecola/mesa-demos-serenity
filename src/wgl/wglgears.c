@@ -413,7 +413,7 @@ make_window(const char *name, int x, int y, int width, int height)
    pixelFormat = ChoosePixelFormat(hDC, &pfd);
    if (!pixelFormat) {
       printf("ChoosePixelFormat failed\n");
-      exit(0);
+      exit(1);
    }
 
    SetPixelFormat(hDC, pixelFormat, &pfd);

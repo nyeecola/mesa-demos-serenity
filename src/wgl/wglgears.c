@@ -490,7 +490,7 @@ make_window(const char *name, int x, int y, int width, int height)
 
       hWnd = CreateWindowEx(dwExStyle, name, name,
                             WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dwStyle,
-                            0, 0,
+                            x, y,
                             winrect.right - winrect.left,
                             winrect.bottom - winrect.top,
                             NULL, NULL, hInst, NULL);

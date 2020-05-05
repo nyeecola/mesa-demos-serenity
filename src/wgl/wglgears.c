@@ -486,6 +486,16 @@ make_window(const char *name, int x, int y, int width, int height)
       /* now, create new context with new pixel format */
       wglMakeCurrent(hDC, NULL);
       wglDeleteContext(hRC);
+      DeleteDC(hDC);
+
+      hWnd = CreateWindowEx(dwExStyle, name, name,
+                            WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dwStyle,
+                            0, 0,
+                            winrect.right - winrect.left,
+                            winrect.bottom - winrect.top,
+                            NULL, NULL, hInst, NULL);
+
+      hDC = GetDC(hWnd);
       SetPixelFormat(hDC, pixelFormat, &pfd);
       hRC = wglCreateContext(hDC);
       wglMakeCurrent(hDC, hRC);

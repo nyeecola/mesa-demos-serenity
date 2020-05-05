@@ -488,6 +488,7 @@ make_window(const char *name, int x, int y, int width, int height)
       wglDeleteContext(hRC);
       DeleteDC(hDC);
 
+      DestroyWindow(hWnd);
       hWnd = CreateWindowEx(dwExStyle, name, name,
                             WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dwStyle,
                             x, y,

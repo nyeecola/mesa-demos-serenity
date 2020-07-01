@@ -277,6 +277,14 @@ reshape(int width, int height)
 }
 
 
+static GLfloat
+srgb_to_linear(GLfloat c)
+{
+   if (c <= 0.04045f)
+      return c / 12.92f;
+   return powf((c + 0.055f) / 1.055f, 2.4f);
+}
+
 static void
 init(void)
 {
@@ -291,6 +299,11 @@ init(void)
    glEnable(GL_LIGHT0);
    glEnable(GL_DEPTH_TEST);
    if (use_srgb) {
+      for (int i = 0; i < 3; ++i) {
+         red[i] = srgb_to_linear(red[i]);
+         green[i] = srgb_to_linear(green[i]);
+         blue[i] = srgb_to_linear(blue[i]);
+      }
       glEnable(GL_FRAMEBUFFER_SRGB);
    }
 

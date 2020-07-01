@@ -71,8 +71,8 @@ static GLboolean use_srgb = GL_FALSE;
 static GLboolean animate = GL_TRUE;
 
 
-static
-void usage(void)
+static void
+usage(void)
 {
    printf("Usage:\n");
    printf("  -samples N         run in multisample mode with at least N samples\n");

@@ -103,6 +103,7 @@ static GLfloat angle = 0.0;
 static GLboolean fullscreen = GL_FALSE;	/* Create a single fullscreen window */
 static GLboolean stereo = GL_FALSE;	/* Enable stereo.  */
 static GLint samples = 0;               /* Choose visual with at least N samples. */
+static GLboolean use_srgb = GL_FALSE;
 static GLboolean animate = GL_TRUE;	/* Animation */
 static GLfloat eyesep = 5.0;		/* Eye separation. */
 static GLfloat fix_point = 40.0;	/* Fixation point distance.  */
@@ -400,6 +401,9 @@ init(void)
    glEnable(GL_LIGHTING);
    glEnable(GL_LIGHT0);
    glEnable(GL_DEPTH_TEST);
+   if (use_srgb) {
+      glEnable(GL_FRAMEBUFFER_SRGB);
+   }
 
    /* make the gears */
    gear1 = glGenLists(1);
@@ -505,6 +509,10 @@ make_window( Display *dpy, const char *name,
    attribs[i++] = 1;
    attribs[i++] = GLX_DEPTH_SIZE;
    attribs[i++] = 1;
+   if (use_srgb) {
+      attribs[i++] = GLX_FRAMEBUFFER_SRGB_CAPABLE_EXT;
+      attribs[i++] = 1;
+   }
    if (samples > 0) {
       attribs[i++] = GLX_SAMPLE_BUFFERS;
       attribs[i++] = 1;
@@ -524,6 +532,8 @@ make_window( Display *dpy, const char *name,
          printf(", Stereo");
       if (samples > 0)
          printf(", Multisample");
+      if (use_srgb)
+         printf(", sRGB");
       printf(" visual\n");
       exit(1);
    }
@@ -710,6 +720,7 @@ usage(void)
 {
    printf("Usage:\n");
    printf("  -display <displayname>  set the display to run on\n");
+   printf("  -srgb                   run in sRGB mode\n");
    printf("  -stereo                 run in stereo mode\n");
    printf("  -samples N              run in multisample mode with at least N samples\n");
    printf("  -fullscreen             run in fullscreen mode\n");
@@ -738,6 +749,9 @@ main(int argc, char *argv[])
       }
       else if (strcmp(argv[i], "-info") == 0) {
          printInfo = GL_TRUE;
+      }
+      else if (strcmp(argv[i], "-srgb") == 0) {
+         use_srgb = GL_TRUE;
       }
       else if (strcmp(argv[i], "-stereo") == 0) {
          stereo = GL_TRUE;

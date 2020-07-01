@@ -75,10 +75,10 @@ static
 void usage(void)
 {
    printf("Usage:\n");
-   printf("-samples N         run in multisample mode with at least N samples\n");
-   printf("-fullscreen        run in fullscreen mode\n");
-   printf("-info              display OpenGL renderer info\n");
-   printf("-geometry WxH+X+Y  window geometry\n");
+   printf("  -samples N         run in multisample mode with at least N samples\n");
+   printf("  -fullscreen        run in fullscreen mode\n");
+   printf("  -info              display OpenGL renderer info\n");
+   printf("  -geometry WxH+X+Y  window geometry\n");
 }
 
 

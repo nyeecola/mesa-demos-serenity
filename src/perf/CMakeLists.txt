@@ -25,6 +25,7 @@ set (targets
 	fbobind
 	fill
 	genmipmap
+	glslstateschange
 	readpixels
 	swapbuffers
 	teximage

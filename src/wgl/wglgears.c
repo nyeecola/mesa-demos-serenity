@@ -340,7 +340,10 @@ WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       PostQuitMessage(0);
       return 0;
    case WM_SIZE:
-      reshape(LOWORD(lParam), HIWORD(lParam));
+      /* This can be reached before wglMakeCurrent */
+      if (wglGetCurrentContext() != NULL) {
+         reshape(LOWORD(lParam), HIWORD(lParam));
+      }
       return 0;
    case WM_KEYDOWN:
       if (wParam == VK_LEFT)

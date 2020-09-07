@@ -408,35 +408,33 @@ invert(GLfloat *m)
 }
 
 /** 
- * Calculate a perspective projection transformation.
+ * Calculate a frustum projection transformation.
  * 
  * @param m the matrix to save the transformation in
- * @param fovy the field of view in the y direction
- * @param aspect the view aspect ratio
- * @param zNear the near clipping plane
- * @param zFar the far clipping plane
+ * @param l the left plane distance
+ * @param r the right plane distance
+ * @param b the bottom plane distance
+ * @param t the top plane distance
+ * @param n the near plane distance
+ * @param f the far plane distance
  */
-void perspective(GLfloat *m, GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar)
+static void
+frustum(GLfloat *m, GLfloat l, GLfloat r, GLfloat b, GLfloat t, GLfloat n, GLfloat f)
 {
    GLfloat tmp[16];
    identity(tmp);
 
-   double sine, cosine, cotangent, deltaZ;
-   GLfloat radians = fovy / 2 * M_PI / 180;
+   GLfloat deltaX = r - l;
+   GLfloat deltaY = t - b;
+   GLfloat deltaZ = f - n;
 
-   deltaZ = zFar - zNear;
-   sincos(radians, &sine, &cosine);
-
-   if ((deltaZ == 0) || (sine == 0) || (aspect == 0))
-      return;
-
-   cotangent = cosine / sine;
-
-   tmp[0] = cotangent / aspect;
-   tmp[5] = cotangent;
-   tmp[10] = -(zFar + zNear) / deltaZ;
+   tmp[0] = (2 * n) / deltaX;
+   tmp[5] = (2 * n) / deltaY;
+   tmp[8] = (r + l) / deltaX;
+   tmp[9] = (t + b) / deltaY;
+   tmp[10] = -(f + n) / deltaZ;
    tmp[11] = -1;
-   tmp[14] = -2 * zNear * zFar / deltaZ;
+   tmp[14] = -(2 * f * n) / deltaZ;
    tmp[15] = 0;
 
    memcpy(m, tmp, sizeof(tmp));
@@ -523,7 +521,7 @@ gears_draw(void)
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    /* Translate and rotate the view */
-   translate(transform, 0, 0, -20);
+   translate(transform, 0, 0, -40);
    rotate(transform, 2 * M_PI * view_rot[0] / 360.0, 1, 0, 0);
    rotate(transform, 2 * M_PI * view_rot[1] / 360.0, 0, 1, 0);
    rotate(transform, 2 * M_PI * view_rot[2] / 360.0, 0, 0, 1);
@@ -544,7 +542,8 @@ static void
 gears_reshape(int width, int height)
 {
    /* Update the projection matrix */
-   perspective(ProjectionMatrix, 60.0, width / (float)height, 1.0, 1024.0);
+   GLfloat h = (GLfloat)height / (GLfloat)width;
+   frustum(ProjectionMatrix, -1.0, 1.0, -h, h, 5.0, 60.0);
 
    /* Set the viewport */
    glViewport(0, 0, (GLint) width, (GLint) height);

@@ -232,7 +232,12 @@ create_gear(GLfloat inner_radius, GLfloat outer_radius, GLfloat width,
 
       /* Inner face */
       START_STRIP;
-      QUAD_WITH_NORMAL(4, 6);
+      SET_NORMAL(-c[0], -s[0], 0);
+      v = GEAR_VERT(v, 4, -1);
+      v = GEAR_VERT(v, 4, 1);
+      SET_NORMAL(-c[4], -s[4], 0);
+      v = GEAR_VERT(v, 6, -1);
+      v = GEAR_VERT(v, 6, 1);
       END_STRIP;
 
       /* Back face */

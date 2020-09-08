@@ -40,6 +40,7 @@
 
 #define _GNU_SOURCE
 
+#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -52,18 +53,8 @@
 #include "eglut.h"
 
 #define STRIPS_PER_TOOTH 7
-#define VERTICES_PER_TOOTH 34
+#define VERTICES_PER_TOOTH 46
 #define GEAR_VERTEX_STRIDE 6
-
-/**
- * Struct describing the vertices in triangle strip
- */
-struct vertex_strip {
-   /** The first vertex in the strip */
-   GLint first;
-   /** The number of consecutive vertices in the strip after the first */
-   GLint count;
-};
 
 /* Each vertex consist of GEAR_VERTEX_STRIDE GLfloat attributes */
 typedef GLfloat GearVertex[GEAR_VERTEX_STRIDE];
@@ -76,10 +67,6 @@ struct gear {
    GearVertex *vertices;
    /** The number of vertices comprising the gear */
    int nvertices;
-   /** The array of triangle strips comprising the gear */
-   struct vertex_strip *strips;
-   /** The number of triangle strips comprising the gear */
-   int nstrips;
    /** The Vertex Buffer Object holding the vertices in the graphics card */
    GLuint vbo;
 };
@@ -145,7 +132,7 @@ create_gear(GLfloat inner_radius, GLfloat outer_radius, GLfloat width,
    struct gear *gear;
    double s[5], c[5];
    GLfloat normal[3];
-   int cur_strip = 0;
+   int cur_strip_start = 0;
    int i;
 
    /* Allocate memory for the gear */
@@ -160,12 +147,13 @@ create_gear(GLfloat inner_radius, GLfloat outer_radius, GLfloat width,
 
    da = 2.0 * M_PI / teeth / 4.0;
 
-   /* Allocate memory for the triangle strip information */
-   gear->nstrips = STRIPS_PER_TOOTH * teeth;
-   gear->strips = calloc(gear->nstrips, sizeof (*gear->strips));
+   /* the first tooth doesn't need the first strip-restart sequence */
+   assert(teeth > 0);
+   gear->nvertices = VERTICES_PER_TOOTH +
+                     (VERTICES_PER_TOOTH + 2) * (teeth - 1);
 
    /* Allocate memory for the vertices */
-   gear->vertices = calloc(VERTICES_PER_TOOTH * teeth, sizeof(*gear->vertices));
+   gear->vertices = calloc(gear->nvertices, sizeof(*gear->vertices));
    v = gear->vertices;
 
    for (i = 0; i < teeth; i++) {
@@ -185,13 +173,20 @@ create_gear(GLfloat inner_radius, GLfloat outer_radius, GLfloat width,
 #define  GEAR_VERT(v, point, sign) vert((v), p[(point)].x, p[(point)].y, (sign) * width * 0.5, normal)
 
 #define START_STRIP do { \
-   gear->strips[cur_strip].first = v - gear->vertices; \
+   cur_strip_start = (v - gear->vertices); \
+   if (cur_strip_start) \
+      v += 2; \
 } while(0);
 
+/* emit prev last vertex
+   emit first vertex */
 #define END_STRIP do { \
-   int _tmp = (v - gear->vertices); \
-   gear->strips[cur_strip].count = _tmp - gear->strips[cur_strip].first; \
-   cur_strip++; \
+   if (cur_strip_start) { \
+      memcpy(gear->vertices + cur_strip_start, \
+             gear->vertices + (cur_strip_start - 1), sizeof(GearVertex)); \
+      memcpy(gear->vertices + cur_strip_start + 1, \
+             gear->vertices + (cur_strip_start + 2), sizeof(GearVertex)); \
+   } \
 } while (0)
 
 #define QUAD_WITH_NORMAL(p1, p2) do { \
@@ -230,26 +225,16 @@ create_gear(GLfloat inner_radius, GLfloat outer_radius, GLfloat width,
       v = GEAR_VERT(v, 6, +1);
       END_STRIP;
 
-      /* Inner face */
-      START_STRIP;
-      SET_NORMAL(-c[0], -s[0], 0);
-      v = GEAR_VERT(v, 4, -1);
-      v = GEAR_VERT(v, 4, 1);
-      SET_NORMAL(-c[4], -s[4], 0);
-      v = GEAR_VERT(v, 6, -1);
-      v = GEAR_VERT(v, 6, 1);
-      END_STRIP;
-
       /* Back face */
       START_STRIP;
       SET_NORMAL(0, 0, -1.0);
-      v = GEAR_VERT(v, 6, -1);
-      v = GEAR_VERT(v, 5, -1);
-      v = GEAR_VERT(v, 4, -1);
-      v = GEAR_VERT(v, 3, -1);
-      v = GEAR_VERT(v, 2, -1);
-      v = GEAR_VERT(v, 1, -1);
       v = GEAR_VERT(v, 0, -1);
+      v = GEAR_VERT(v, 1, -1);
+      v = GEAR_VERT(v, 2, -1);
+      v = GEAR_VERT(v, 3, -1);
+      v = GEAR_VERT(v, 4, -1);
+      v = GEAR_VERT(v, 5, -1);
+      v = GEAR_VERT(v, 6, -1);
       END_STRIP;
 
       /* Outer face */
@@ -268,9 +253,19 @@ create_gear(GLfloat inner_radius, GLfloat outer_radius, GLfloat width,
       START_STRIP;
       QUAD_WITH_NORMAL(5, 3);
       END_STRIP;
+
+      /* Inner face */
+      START_STRIP;
+      SET_NORMAL(-c[0], -s[0], 0);
+      v = GEAR_VERT(v, 4, -1);
+      v = GEAR_VERT(v, 4, 1);
+      SET_NORMAL(-c[4], -s[4], 0);
+      v = GEAR_VERT(v, 6, -1);
+      v = GEAR_VERT(v, 6, 1);
+      END_STRIP;
    }
 
-   gear->nvertices = (v - gear->vertices);
+   assert(gear->nvertices == (v - gear->vertices));
 
    /* Store the vertices in a vertex buffer object (VBO) */
    glGenBuffers(1, &gear->vbo);
@@ -501,9 +496,7 @@ draw_gear(struct gear *gear, GLfloat *transform,
    glEnableVertexAttribArray(1);
 
    /* Draw the triangle strips that comprise the gear */
-   int n;
-   for (n = 0; n < gear->nstrips; n++)
-      glDrawArrays(GL_TRIANGLE_STRIP, gear->strips[n].first, gear->strips[n].count);
+   glDrawArrays(GL_TRIANGLE_STRIP, 0, gear->nvertices);
 
    /* Disable the attributes */
    glDisableVertexAttribArray(1);

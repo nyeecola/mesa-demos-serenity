@@ -103,6 +103,7 @@ static GLfloat angle = 0.0;
 static GLboolean fullscreen = GL_FALSE;	/* Create a single fullscreen window */
 static GLboolean stereo = GL_FALSE;	/* Enable stereo.  */
 static GLint samples = 0;               /* Choose visual with at least N samples. */
+static GLint swapinterval = 1;          /* Swap interval */
 static GLboolean use_srgb = GL_FALSE;
 static GLboolean animate = GL_TRUE;	/* Animation */
 static GLfloat eyesep = 5.0;		/* Eye separation. */
@@ -616,13 +617,27 @@ is_glx_extension_supported(Display *dpy, const char *query)
  * Attempt to determine whether or not the display is synched to vblank.
  */
 static void
-query_vsync(Display *dpy, GLXDrawable drawable)
+setup_vsync(Display *dpy, GLXDrawable drawable)
 {
    int interval = 0;
+
+   if (!is_glx_extension_supported(dpy, "GLX_EXT_swap_control_tear") &&
+       swapinterval < 0) {
+      printf("GLX_EXT_swap_control_tear not supported, disabling\n");
+      swapinterval = -swapinterval;
+   }
 
 #if defined(GLX_EXT_swap_control)
    if (is_glx_extension_supported(dpy, "GLX_EXT_swap_control")) {
        unsigned int tmp = -1;
+
+       if (swapinterval != 1) {
+          PFNGLXSWAPINTERVALEXTPROC pglXSwapIntervalEXT =
+             (PFNGLXSWAPINTERVALEXTPROC)
+             glXGetProcAddressARB((const GLubyte *) "glXSwapIntervalEXT");
+          pglXSwapIntervalEXT(dpy, drawable, swapinterval);
+       }
+
        glXQueryDrawable(dpy, drawable, GLX_SWAP_INTERVAL_EXT, &tmp);
        interval = tmp;
    } else
@@ -631,6 +646,13 @@ query_vsync(Display *dpy, GLXDrawable drawable)
       PFNGLXGETSWAPINTERVALMESAPROC pglXGetSwapIntervalMESA =
           (PFNGLXGETSWAPINTERVALMESAPROC)
           glXGetProcAddressARB((const GLubyte *) "glXGetSwapIntervalMESA");
+
+       if (swapinterval != 1) {
+          PFNGLXSWAPINTERVALMESAPROC pglXSwapIntervalMESA =
+             (PFNGLXSWAPINTERVALMESAPROC)
+             glXGetProcAddressARB((const GLubyte *) "glXSwapIntervalMESA");
+          pglXSwapIntervalMESA(swapinterval);
+       }
 
       interval = (*pglXGetSwapIntervalMESA)();
    } else if (is_glx_extension_supported(dpy, "GLX_SGI_swap_control")) {
@@ -641,17 +663,23 @@ query_vsync(Display *dpy, GLXDrawable drawable)
        * export GLX_MESA_swap_control.  In that case, this branch will never
        * be taken, and the correct result should be reported.
        */
-      interval = 1;
+       if (swapinterval != 1) {
+          PFNGLXSWAPINTERVALSGIPROC pglXSwapIntervalSGI =
+             (PFNGLXSWAPINTERVALSGIPROC)
+             glXGetProcAddressARB((const GLubyte *) "glXSwapIntervalSGI");
+          pglXSwapIntervalSGI(swapinterval);
+       }
+
+      interval = swapinterval;
    }
 
-
-   if (interval > 0) {
+   if (interval != 0) {
       printf("Running synchronized to the vertical refresh.  The framerate should be\n");
       if (interval == 1) {
          printf("approximately the same as the monitor refresh rate.\n");
-      } else if (interval > 1) {
+      } else {
          printf("approximately 1/%d the monitor refresh rate.\n",
-                interval);
+                abs(interval));
       }
    }
 }
@@ -735,6 +763,7 @@ usage(void)
    printf("  -srgb                   run in sRGB mode\n");
    printf("  -stereo                 run in stereo mode\n");
    printf("  -samples N              run in multisample mode with at least N samples\n");
+   printf("  -swapinterval N         set swap interval to N frames (default 1)\n");
    printf("  -fullscreen             run in fullscreen mode\n");
    printf("  -info                   display OpenGL renderer info\n");
    printf("  -geometry WxH+X+Y       window geometry\n");
@@ -772,6 +801,10 @@ main(int argc, char *argv[])
          samples = strtod(argv[i+1], NULL );
          ++i;
       }
+      else if (i < argc-1 && strcmp(argv[i], "-swapinterval") == 0) {
+         swapinterval = strtod(argv[i+1], NULL );
+         ++i;
+      }
       else if (strcmp(argv[i], "-fullscreen") == 0) {
          fullscreen = GL_TRUE;
       }
@@ -803,7 +836,7 @@ main(int argc, char *argv[])
    make_window(dpy, "glxgears", x, y, winWidth, winHeight, &win, &ctx, &visId);
    XMapWindow(dpy, win);
    glXMakeCurrent(dpy, win, ctx);
-   query_vsync(dpy, win);
+   setup_vsync(dpy, win);
 
    if (printInfo) {
       printf("GL_RENDERER   = %s\n", (char *) glGetString(GL_RENDERER));

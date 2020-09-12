@@ -403,6 +403,7 @@ init(void)
    static GLfloat red[4] = { 0.8, 0.1, 0.0, 1.0 };
    static GLfloat green[4] = { 0.0, 0.8, 0.2, 1.0 };
    static GLfloat blue[4] = { 0.2, 0.2, 1.0, 1.0 };
+   int i;
 
    glLightfv(GL_LIGHT0, GL_POSITION, pos);
    glEnable(GL_CULL_FACE);
@@ -410,7 +411,7 @@ init(void)
    glEnable(GL_LIGHT0);
    glEnable(GL_DEPTH_TEST);
    if (use_srgb) {
-      for (int i = 0; i < 3; ++i) {
+      for (i = 0; i < 3; ++i) {
          red[i] = srgb_to_linear(red[i]);
          green[i] = srgb_to_linear(green[i]);
          blue[i] = srgb_to_linear(blue[i]);

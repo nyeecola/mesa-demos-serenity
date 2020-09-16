@@ -31,5 +31,3 @@ install (
 		wglgears
 		wincopy
 	DESTINATION wgl)
-
-add_subdirectory (rtotex)

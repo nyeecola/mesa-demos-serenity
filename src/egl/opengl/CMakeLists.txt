@@ -12,6 +12,9 @@ link_libraries (
 
 set (subdir egl)
 
+add_executable (eglinfo eglinfo.c)
+add_executable (peglgears peglgears.c)
+
 # Targets that can be built both for fullscreen EGL and X11
 
 set (targets

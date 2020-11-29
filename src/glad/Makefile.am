@@ -36,4 +36,4 @@ libglad_la_SOURCES = \
 libglad_la_LIBADD = -ldl
 
 EXTRA_DIST = \
-	README
+	README.md

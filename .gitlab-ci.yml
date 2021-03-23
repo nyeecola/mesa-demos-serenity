@@ -35,7 +35,7 @@ x86_build:
     # No need to pull the whole repo to build the container image
     GIT_STRATEGY: none
     # /!\ Bump the TAG when modifying the DEBS
-    DEBIAN_TAG: &x86_build "2019-11-25"
+    DEBIAN_TAG: &x86_build "2021-03-23"
     DEBIAN_DEBS: >-
       build-essential
       autoconf
@@ -45,6 +45,7 @@ x86_build:
       pkg-config
       cmake
       ninja-build
+      mingw-w64
 
       freeglut3-dev
       libegl1-mesa-dev
@@ -95,6 +96,13 @@ cmake:
   extends:
     - .use-x86_build
     - .cmake-build
+
+cmake-mingw:
+  extends:
+    - .use-x86_build
+    - .build
+  script:
+    - .gitlab-ci/build-mingw.sh
 
 autotools:
   extends:

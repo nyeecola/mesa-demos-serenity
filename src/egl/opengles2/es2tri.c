@@ -215,11 +215,6 @@ init(void)
 {
    typedef void (*proc)();
 
-#if 1 /* test code */
-   proc p = eglGetProcAddress("glMapBufferOES");
-   assert(p);
-#endif
-
    glClearColor(0.4, 0.4, 0.4, 0.0);
 
    create_shaders();

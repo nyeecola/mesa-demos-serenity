@@ -109,14 +109,21 @@ _eglutNativeInitWindow(struct eglut_window *win, const char *title,
                        int x, int y, int w, int h)
 {
    struct wl_egl_window *native;
-   struct wl_region *region;
 
    window.surface = wl_compositor_create_surface(display.compositor);
 
-   region = wl_compositor_create_region(display.compositor);
-   wl_region_add(region, 0, 0, w, h);
-   wl_surface_set_opaque_region(window.surface, region);
-   wl_region_destroy(region);
+   EGLint alpha_size;
+   if (!eglGetConfigAttrib(_eglut->dpy,
+            win->config, EGL_ALPHA_SIZE, &alpha_size))
+      _eglutFatal("failed to get alpha size");
+
+   if (!alpha_size) {
+      struct wl_region *region =
+         wl_compositor_create_region(display.compositor);
+      wl_region_add(region, 0, 0, w, h);
+      wl_surface_set_opaque_region(window.surface, region);
+      wl_region_destroy(region);
+   }
 
    window.shell_surface = wl_shell_get_shell_surface(display.shell,
          window.surface);

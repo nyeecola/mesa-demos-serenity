@@ -627,7 +627,7 @@ static const char vertex_shader[] =
 "\n"
 "    // Multiply the diffuse value by the vertex color (which is fixed in this case)\n"
 "    // to get the actual color that we will use to draw this vertex with\n"
-"    Color = (ambient + diffuse) * MaterialColor;\n"
+"    Color = vec4((ambient + diffuse) * MaterialColor.xyz, MaterialColor.a);\n"
 "\n"
 "    // Transform the position to clip coordinates\n"
 "    gl_Position = ModelViewProjectionMatrix * vec4(position, 1.0);\n"

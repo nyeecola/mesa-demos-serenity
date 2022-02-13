@@ -97,6 +97,8 @@ glut_enabled=no
 #DEMO_CFLAGS="$DEMO_CFLAGS $GLEW_CFLAGS"
 #DEMO_LIBS="$DEMO_LIBS $GLEW_LIBS"
 
+DEMO_LIBS="$DEMO_LIBS -lSDL2"
+
 # LIBS was set by AC_CHECK_LIB above
 LIBS=""
 

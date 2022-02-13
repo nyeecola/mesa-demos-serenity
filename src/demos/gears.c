@@ -10,7 +10,7 @@
  * Brian Paul
  */
 
-/* Conversion to GLUT by Mark J. Kilgard */
+/* Conversion to SDL by Italo Nicola */
 
 
 
@@ -18,7 +18,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "glut_wrap.h"
+#include <GL/gl.h>
+#include <SDL2/SDL.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265
@@ -27,11 +28,12 @@
 static GLint T0 = 0;
 static GLint Frames = 0;
 static GLint autoexit = 0;
-static GLint win = 0;
 static GLboolean Visible = GL_TRUE;
 static GLboolean Animate = GL_TRUE;
 static GLfloat viewDist = 40.0;
 
+SDL_Window *window;
+SDL_GLContext context;
 
 /**
 
@@ -174,7 +176,9 @@ cleanup(void)
    glDeleteLists(gear1, 1);
    glDeleteLists(gear2, 1);
    glDeleteLists(gear3, 1);
-   glutDestroyWindow(win);
+   SDL_GL_DeleteContext(context);
+   SDL_DestroyWindow(window);
+   SDL_Quit();
 }
 
 static void
@@ -210,12 +214,12 @@ draw(void)
 
   glPopMatrix();
 
-  glutSwapBuffers();
+  SDL_GL_SwapWindow(window);
 
   Frames++;
 
   {
-    GLint t = glutGet(GLUT_ELAPSED_TIME);
+    GLint t = SDL_GetTicks();
     if (t - T0 >= 5000) {
       GLfloat seconds = (t - T0) / 1000.0;
       GLfloat fps = Frames / seconds;
@@ -236,7 +240,7 @@ static void
 idle(void)
 {
   static double t0 = -1.;
-  double dt, t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+  double dt, t = SDL_GetTicks() / 1000.0;
   if (t0 < 0.0)
     t0 = t;
   dt = t - t0;
@@ -245,22 +249,24 @@ idle(void)
   angle += 70.0 * dt;  /* 70 degrees per second */
   angle = fmod(angle, 360.0); /* prevents eventual overflow */
 
-  glutPostRedisplay();
+  //glutPostRedisplay();
 }
 
 static void
 update_idle_func(void)
 {
+#if 0
   if (Visible && Animate)
     glutIdleFunc(idle);
   else
     glutIdleFunc(NULL);
+#endif
 }
 
 /* change view angle, exit upon ESC */
 /* ARGSUSED1 */
 static void
-key(unsigned char k, int x, int y)
+key(unsigned char k/*, int x, int y*/)
 {
   switch (k) {
   case 'z':
@@ -279,38 +285,38 @@ key(unsigned char k, int x, int y)
      Animate = !Animate;
      update_idle_func();
      break;
-  case 27:  /* Escape */
+  case SDLK_ESCAPE:
     cleanup();
     exit(0);
     break;
   default:
     return;
   }
-  glutPostRedisplay();
+  //glutPostRedisplay();
 }
 
 /* change view angle */
 /* ARGSUSED1 */
 static void
-special(int k, int x, int y)
+special(int k/*, int x, int y*/)
 {
   switch (k) {
-  case GLUT_KEY_UP:
+  case SDLK_UP:
     view_rotx += 5.0;
     break;
-  case GLUT_KEY_DOWN:
+  case SDLK_DOWN:
     view_rotx -= 5.0;
     break;
-  case GLUT_KEY_LEFT:
+  case SDLK_LEFT:
     view_roty += 5.0;
     break;
-  case GLUT_KEY_RIGHT:
+  case SDLK_RIGHT:
     view_roty -= 5.0;
     break;
   default:
     return;
   }
-  glutPostRedisplay();
+  //glutPostRedisplay();
 }
 
 /* new window size or exposure */
@@ -389,19 +395,41 @@ visible(int vis)
 
 int main(int argc, char *argv[])
 {
-  glutInitWindowSize(300, 300);
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-  win = glutCreateWindow("Gears");
+  GLuint win_w = 300, win_h = 300;
+  SDL_Window *window = SDL_CreateWindow(
+          "Gears", 0, 0, win_w, win_h,
+          SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
+  context = SDL_GL_CreateContext(window);
+
+  reshape(win_w, win_h);
+
   init(argc, argv);
 
-  glutDisplayFunc(draw);
-  glutReshapeFunc(reshape);
-  glutKeyboardFunc(key);
-  glutSpecialFunc(special);
-  glutVisibilityFunc(visible);
-  update_idle_func();
+  while (GL_TRUE) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch(event.type) {
+            case SDL_WINDOWEVENT:
+                if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+                    reshape(event.window.data1, event.window.data2);
+                break;
+            case SDL_KEYDOWN:
+                key(event.key.keysym.sym);
+                special(event.key.keysym.sym);
+                break;
+            default:
+                break;
+        }
+    }
 
-  glutMainLoop();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    idle();
+    draw();
+
+    SDL_GL_SwapWindow(window);
+  }
+
   return 0;             /* ANSI C requires main to return int. */
 }

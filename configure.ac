@@ -67,32 +67,32 @@ DEMO_CFLAGS="$DEMO_CFLAGS $GL_CFLAGS"
 DEMO_LIBS="$DEMO_LIBS $GL_LIBS"
 
 dnl Check for GLUT
-glut_enabled=yes
-AC_ARG_WITH([glut],
-	[AS_HELP_STRING([--with-glut=DIR],
-			[glut install directory])],
-	[GLUT_CFLAGS="-I$withval/include"
-	 GLUT_LIBS="-L$withval/lib -lglut"],
-	[GLUT_CFLAGS=""
-	 GLUT_LIBS="-lglut"]
-        )
-AS_IF([test "x$with_glut" != xno],
-      [AC_CHECK_HEADER([GL/glut.h],
-                       [],
-                       [glut_enabled=no])
-       AC_CHECK_LIB([glut],
-                    [glutInit],
-                    [],
-                    [glut_enabled=no])],
-      [glut_enabled=no])
-
-dnl Check for FreeGLUT 2.6 or later
-AC_EGREP_HEADER([glutInitContextProfile],
-		[GL/freeglut.h],
-		[AC_DEFINE(HAVE_FREEGLUT)],
-		[])
-
-dnl Check for GLEW
+glut_enabled=no
+#AC_ARG_WITH([glut],
+#	[AS_HELP_STRING([--with-glut=DIR],
+#			[glut install directory])],
+#	[GLUT_CFLAGS="-I$withval/include"
+#	 GLUT_LIBS="-L$withval/lib -lglut"],
+#	[GLUT_CFLAGS=""
+#	 GLUT_LIBS="-lglut"]
+#        )
+#AS_IF([test "x$with_glut" != xno],
+#      [AC_CHECK_HEADER([GL/glut.h],
+#                       [],
+#                       [glut_enabled=no])
+#       AC_CHECK_LIB([glut],
+#                    [glutInit],
+#                    [],
+#                    [glut_enabled=no])],
+#      [glut_enabled=no])
+#
+#dnl Check for FreeGLUT 2.6 or later
+#AC_EGREP_HEADER([glutInitContextProfile],
+#		[GL/freeglut.h],
+#		[AC_DEFINE(HAVE_FREEGLUT)],
+#		[])
+#
+#dnl Check for GLEW
 #PKG_CHECK_MODULES(GLEW, [glew >= 1.5.4])
 #DEMO_CFLAGS="$DEMO_CFLAGS $GLEW_CFLAGS"
 #DEMO_LIBS="$DEMO_LIBS $GLEW_LIBS"
